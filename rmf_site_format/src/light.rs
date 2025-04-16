@@ -18,8 +18,8 @@
 use crate::*;
 #[cfg(feature = "bevy")]
 use bevy::prelude::{
-    Bundle, Component, DirectionalLight as BevyDirectionalLight, PointLight as BevyPointLight,
-    SpotLight as BevySpotLight,
+    Bundle, Color, Component, DirectionalLight as BevyDirectionalLight,
+    PointLight as BevyPointLight, SpotLight as BevySpotLight,
 };
 use serde::{Deserialize, Serialize};
 
@@ -192,7 +192,7 @@ pub struct PointLight {
 impl PointLight {
     pub fn to_bevy(&self) -> BevyPointLight {
         BevyPointLight {
-            color: self.color.into(),
+            color: Color::srgba(self.color[0], self.color[1], self.color[2], self.color[3]),
             intensity: self.intensity,
             range: self.range,
             radius: self.radius,
@@ -232,7 +232,7 @@ pub struct SpotLight {
 impl SpotLight {
     pub fn to_bevy(&self) -> BevySpotLight {
         BevySpotLight {
-            color: self.color.into(),
+            color: Color::srgba(self.color[0], self.color[1], self.color[2], self.color[3]),
             intensity: self.intensity,
             range: self.range,
             radius: self.radius,
@@ -268,7 +268,7 @@ pub struct DirectionalLight {
 impl DirectionalLight {
     pub fn to_bevy(&self) -> BevyDirectionalLight {
         BevyDirectionalLight {
-            color: self.color.into(),
+            color: Color::srgba(self.color[0], self.color[1], self.color[2], self.color[3]),
             illuminance: self.illuminance,
             shadows_enabled: self.enable_shadows,
             ..Default::default()

@@ -371,7 +371,7 @@ impl<'w, 's> ModelLoader<'w, 's> {
         &mut self,
         parent: Entity,
         instance: ModelInstance<Entity>,
-    ) -> EntityCommands<'w, 's, '_> {
+    ) -> EntityCommands<'_> {
         self.spawn_model_instance_impulse(parent, instance, move |impulse| {
             impulse.detach();
         })
@@ -384,7 +384,7 @@ impl<'w, 's> ModelLoader<'w, 's> {
         parent: Entity,
         instance: ModelInstance<Entity>,
         impulse: impl FnOnce(Impulse<InstanceSpawningResult, ()>),
-    ) -> EntityCommands<'w, 's, '_> {
+    ) -> EntityCommands<'_> {
         let affiliation = instance.description.clone();
         let id = self.commands.spawn(instance).set_parent(parent).id();
         let spawning_impulse = self.commands.request(

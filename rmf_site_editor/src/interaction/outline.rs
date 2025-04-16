@@ -17,7 +17,7 @@
 
 use crate::{interaction::*, site::DrawingMarker};
 use bevy::render::view::RenderLayers;
-use bevy_mod_outline::{OutlineBundle, OutlineMode, OutlineRenderLayers, OutlineVolume};
+use bevy_mod_outline::{OutlineMode, OutlineRenderLayers, OutlineVolume};
 use rmf_site_format::{
     DoorType, FiducialMarker, FloorMarker, LiftCabin, LightKind, LocationTags, MeasurementMarker,
     ModelMarker, PhysicalCameraProperties, PrimitiveShape, WallMarker,
@@ -172,20 +172,21 @@ pub fn update_outline_visualization(
                 if let Some(color) = color {
                     commands
                         .entity(top)
-                        .insert(OutlineBundle {
-                            outline: OutlineVolume {
-                                visible: true,
-                                width: 3.0,
-                                colour: color,
-                            },
-                            ..default()
+                        .insert(OutlineVolume {
+                            visible: true,
+                            width: 3.0,
+                            colour: color,
                         })
+                        .insert(OutlineMode::default())
+                        // TODO(@xiyuoh) check if these components are required
+                        // .insert(OutlineStencil::default())
+                        // .insert(ComputedOutline::default())
                         .insert(depth.clone())
                         .insert(layers);
                 } else {
                     commands
                         .entity(top)
-                        .remove::<OutlineBundle>()
+                        .remove::<OutlineVolume>()
                         .remove::<OutlineMode>();
                 }
 

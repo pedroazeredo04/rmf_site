@@ -269,7 +269,7 @@ pub fn update_gizmo_click_start(
     mut selection_blocker: ResMut<SelectionBlockers>,
     gizmo_blocker: Res<GizmoBlockers>,
     mut visibility: Query<&mut Visibility>,
-    mouse_button_input: Res<Input<MouseButton>>,
+    mouse_button_input: Res<ButtonInput<MouseButton>>,
     transforms: Query<(&Transform, &GlobalTransform)>,
     raycast_sources: Query<&RaycastSource<SiteRaycastSet>>,
     mut cursor: ResMut<Cursor>,
@@ -365,7 +365,7 @@ pub fn update_gizmo_release(
     mut selection_blockers: ResMut<SelectionBlockers>,
     gizmo_blockers: Res<GizmoBlockers>,
     mut gizmo_state: ResMut<GizmoState>,
-    mouse_button_input: Res<Input<MouseButton>>,
+    mouse_button_input: Res<ButtonInput<MouseButton>>,
     mut picked: ResMut<Picked>,
 ) {
     let mouse_released = mouse_button_input.just_released(MouseButton::Left);

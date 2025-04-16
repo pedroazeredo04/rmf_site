@@ -77,8 +77,8 @@ pub fn update_cursor_command(
     mut camera_controls: ResMut<CameraControls>,
     mut cursor_command: ResMut<CursorCommand>,
     mut mouse_wheel: EventReader<MouseWheel>,
-    mouse_input: Res<Input<MouseButton>>,
-    keyboard_input: Res<Input<KeyCode>>,
+    mouse_input: Res<ButtonInput<MouseButton>>,
+    keyboard_input: Res<ButtonInput<KeyCode>>,
     raycast_sources: Query<&RaycastSource<SiteRaycastSet>>,
     cameras: Query<(&Projection, &Transform, &GlobalTransform)>,
     primary_windows: Query<&Window, With<PrimaryWindow>>,
@@ -383,8 +383,8 @@ fn get_cursor_selected_point(
 }
 
 fn get_command_type(
-    keyboard_input: &Res<Input<KeyCode>>,
-    mouse_input: &Res<Input<MouseButton>>,
+    keyboard_input: &Res<ButtonInput<KeyCode>>,
+    mouse_input: &Res<ButtonInput<MouseButton>>,
     scroll_motion: &f32,
     projection_mode: ProjectionMode,
 ) -> CameraCommandType {

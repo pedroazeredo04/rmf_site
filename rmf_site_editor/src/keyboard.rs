@@ -20,10 +20,7 @@ use crate::{
     site::{AlignSiteDrawings, Delete},
     CreateNewWorkspace, CurrentWorkspace, WorkspaceLoader, WorkspaceSaver,
 };
-use bevy::{
-    prelude::{Input as UserInput, *},
-    window::PrimaryWindow,
-};
+use bevy::{prelude::*, window::PrimaryWindow};
 use bevy_egui::EguiContexts;
 use bevy_impulse::*;
 
@@ -53,7 +50,7 @@ impl Plugin for KeyboardInputPlugin {
 }
 
 fn handle_keyboard_input(
-    keyboard_input: Res<UserInput<KeyCode>>,
+    keyboard_input: Res<ButtonInput<KeyCode>>,
     selection: Res<Selection>,
     mut egui_context: EguiContexts,
     mut delete: EventWriter<Delete>,
@@ -137,7 +134,7 @@ fn handle_keyboard_input(
 pub fn keyboard_just_pressed_stream(
     In(ContinuousService { key }): ContinuousServiceInput<(), (), StreamOf<KeyCode>>,
     mut orders: ContinuousQuery<(), (), StreamOf<KeyCode>>,
-    keyboard_input: Res<UserInput<KeyCode>>,
+    keyboard_input: Res<ButtonInput<KeyCode>>,
 ) {
     let Some(mut orders) = orders.get_mut(&key) else {
         return;

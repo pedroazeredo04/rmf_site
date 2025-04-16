@@ -24,7 +24,7 @@ use crate::{
 use anyhow::{anyhow, Error as Anyhow};
 use bevy::{
     ecs::system::{StaticSystemParam, SystemParam},
-    prelude::{Input, *},
+    prelude::*,
 };
 use bevy_impulse::*;
 use bevy_mod_raycast::{
@@ -733,7 +733,7 @@ pub fn hover_service<Filter: SystemParam + 'static>(
     mut hovered: Query<&mut Hovered>,
     mut hovering: ResMut<Hovering>,
     mut hover: EventReader<Hover>,
-    mouse_button_input: Res<Input<MouseButton>>,
+    mouse_button_input: Res<ButtonInput<MouseButton>>,
     touch_input: Res<Touches>,
     mut select: EventWriter<Select>,
     blockers: Option<Res<PickingBlockers>>,

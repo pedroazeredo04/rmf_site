@@ -80,7 +80,7 @@ impl KeyboardCommand {
 pub fn update_keyboard_command(
     mut camera_controls: ResMut<CameraControls>,
     mut keyboard_command: ResMut<KeyboardCommand>,
-    keyboard_input: Res<Input<KeyCode>>,
+    keyboard_input: Res<ButtonInput<KeyCode>>,
     cameras: Query<(&Camera, &Projection, &Transform, &GlobalTransform)>,
     immediate_raycast: Raycast,
     time: Res<Time>,

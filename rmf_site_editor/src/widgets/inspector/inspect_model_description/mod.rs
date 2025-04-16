@@ -18,7 +18,7 @@
 use bevy::{
     ecs::{
         component::{ComponentId, ComponentInfo},
-        query::WorldQuery,
+        query::QueryData,
         system::{EntityCommands, SystemParam},
     },
     prelude::*,
@@ -423,7 +423,7 @@ type ModelPropertyQuery<'w, 's, P> =
 
 /// Helper function to get the corresponding description entity for a given model instance entity
 /// if it exists.
-fn get_selected_description_entity<'w, 's, P: Component, T: WorldQuery>(
+fn get_selected_description_entity<'w, 's, P: Component, T: QueryData>(
     selection: Entity,
     model_instances: &ModelPropertyQuery<'w, 's, P>,
     model_descriptions: &Query<'w, 's, T, (With<ModelMarker>, With<Group>)>,

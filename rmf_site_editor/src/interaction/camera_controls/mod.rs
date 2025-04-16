@@ -16,12 +16,10 @@
 */
 use crate::interaction::{InteractionAssets, PickingBlockers};
 use bevy::{
-    core_pipeline::{
-        clear_color::ClearColorConfig, core_3d::Camera3dBundle, tonemapping::Tonemapping,
-    },
+    core_pipeline::{core_3d::Camera3dBundle, tonemapping::Tonemapping},
     prelude::*,
     render::{
-        camera::{Camera, Projection, ScalingMode},
+        camera::{Camera, ClearColorConfig, Projection, ScalingMode},
         view::RenderLayers,
     },
 };
@@ -273,11 +271,12 @@ impl FromWorld for CameraControls {
             world
                 .spawn(Camera3dBundle {
                     projection: Projection::Perspective(Default::default()),
-                    camera: Camera { order, ..default() },
-                    camera_3d: Camera3d {
+                    camera: Camera {
+                        order,
                         clear_color: ClearColorConfig::None,
                         ..default()
                     },
+                    camera_3d: Camera3d { ..default() },
                     tonemapping: Tonemapping::ReinhardLuminance,
                     ..default()
                 })
@@ -341,12 +340,10 @@ impl FromWorld for CameraControls {
                     camera: Camera {
                         is_active: false,
                         order,
-                        ..default()
-                    },
-                    camera_3d: Camera3d {
                         clear_color: ClearColorConfig::None,
                         ..default()
                     },
+                    camera_3d: Camera3d { ..default() },
                     projection: Projection::Orthographic(ortho_projection.clone()),
                     tonemapping: Tonemapping::ReinhardLuminance,
                     ..default()

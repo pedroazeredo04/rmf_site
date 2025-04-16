@@ -16,11 +16,9 @@
 */
 
 use crate::site::ChangePlugin;
-use bevy::{
-    prelude::*,
-    utils::{HashMap, Uuid},
-};
+use bevy::{prelude::*, utils::HashMap};
 use rmf_site_format::{FilteredIssueKinds, FilteredIssues, IssueKey};
+use uuid::Uuid;
 
 #[derive(Component, Debug, Clone)]
 pub struct Issue {

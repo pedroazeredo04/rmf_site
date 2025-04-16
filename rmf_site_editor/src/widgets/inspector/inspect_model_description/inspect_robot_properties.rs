@@ -28,7 +28,6 @@ use crate::{
 use bevy::{
     ecs::system::SystemParam,
     prelude::{Component, *},
-    utils::Uuid,
 };
 use bevy_egui::egui::{ComboBox, Ui};
 use serde::{de::DeserializeOwned, Serialize};
@@ -36,6 +35,7 @@ use serde_json::{Error, Map, Value};
 use smallvec::SmallVec;
 use std::collections::HashMap;
 use std::fmt::Debug;
+use uuid::Uuid;
 
 type InsertDefaultValueFn = fn() -> Result<Value, Error>;
 

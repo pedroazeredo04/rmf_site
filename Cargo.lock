@@ -5952,6 +5952,7 @@ dependencies = [
  "tracing-subscriber",
  "urdf-rs",
  "utm",
+ "uuid",
  "yaserde",
 ]
 

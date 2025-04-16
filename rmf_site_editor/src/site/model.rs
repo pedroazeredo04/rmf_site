@@ -27,7 +27,6 @@ use bevy::{
     prelude::*,
     render::view::RenderLayers,
     scene::SceneInstance,
-    utils::Uuid,
 };
 use bevy_impulse::*;
 use bevy_mod_outline::OutlineMeshExt;
@@ -38,6 +37,7 @@ use rmf_site_format::{
 use smallvec::SmallVec;
 use std::{any::TypeId, collections::HashSet, fmt, future::Future};
 use thiserror::Error;
+use uuid::Uuid;
 
 /// Denotes the properties of the current spawned scene for the model, to despawn when updating AssetSource
 /// and avoid spurious reloading if the new `AssetSource` is equal to the old one

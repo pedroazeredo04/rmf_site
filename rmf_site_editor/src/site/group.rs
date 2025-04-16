@@ -16,7 +16,7 @@
 */
 
 use bevy::{
-    ecs::system::{Command, EntityCommands},
+    ecs::{system::EntityCommands, world::Command},
     prelude::*,
 };
 use rmf_site_format::{Affiliation, Group};

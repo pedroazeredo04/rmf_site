@@ -16,8 +16,8 @@
 */
 
 use crate::interaction::*;
-use bevy::{math::Affine3A, prelude::*, window::PrimaryWindow};
-use bevy_mod_raycast::{deferred::RaycastMesh, deferred::RaycastSource, primitives::rays::Ray3d};
+use bevy::{math::Affine3A, picking::backend::ray::RayMap, prelude::*};
+use bevy_mod_raycast::deferred::{RaycastMesh, RaycastSource};
 use rmf_site_format::Pose;
 
 #[derive(Debug, Clone, Copy)]
@@ -400,7 +400,7 @@ pub fn update_drag_motions(
     drag_state: Res<GizmoState>,
     mut cursor_motion: EventReader<CursorMoved>,
     mut move_to: EventWriter<MoveTo>,
-    primary_window: Query<&Window, With<PrimaryWindow>>,
+    ray_map: Res<RayMap>,
 ) {
     if let GizmoState::Dragging(dragging) = *drag_state {
         let cursor_position = match cursor_motion.read().last() {
@@ -411,24 +411,10 @@ pub fn update_drag_motions(
         };
 
         let active_camera = camera_controls.active_camera();
-        let ray = if let Some(camera) = cameras.get(active_camera).ok() {
-            let camera_tf = match transforms.get(active_camera).ok() {
-                Some(tf) => tf.1.clone(),
-                None => {
-                    return;
-                }
-            };
-
-            let Ok(primary_window) = primary_window.get_single() else {
-                return;
-            };
-            match Ray3d::from_screenspace(cursor_position, camera, &camera_tf, primary_window) {
-                Some(ray) => ray,
-                None => {
-                    return;
-                }
-            }
-        } else {
+        let Some((_, ray)) = ray_map
+            .iter()
+            .find(|(ray_id, _)| ray_id.camera == active_camera)
+        else {
             return;
         };
 
@@ -442,9 +428,9 @@ pub fn update_drag_motions(
                 } else {
                     axis.along.normalize_or_zero()
                 };
-                let dp = ray.origin() - initial.click_point;
-                let a = ray.direction().dot(n);
-                let b = ray.direction().dot(dp);
+                let dp = ray.origin - initial.click_point;
+                let a = ray.direction.dot(n);
+                let b = ray.direction.dot(dp);
                 let c = n.dot(dp);
 
                 let denom = a.powi(2) - 1.;
@@ -479,7 +465,7 @@ pub fn update_drag_motions(
                     plane.in_plane.normalize_or_zero()
                 };
 
-                let n_r = ray.direction();
+                let n_r = ray.direction;
                 let denom = n_p.dot(n_r);
                 if denom.abs() < 1e-3 {
                     // The rays are nearly parallel so we should not attempt
@@ -487,8 +473,8 @@ pub fn update_drag_motions(
                     return;
                 }
 
-                let t = (initial.click_point - ray.origin()).dot(n_p) / denom;
-                let delta = ray.position(t) - initial.click_point;
+                let t = (initial.click_point - ray.origin).dot(n_p) / denom;
+                let delta = ray.get_point(t) - initial.click_point;
                 let tf_goal = initial
                     .tf_for_entity_global
                     .with_translation(initial.tf_for_entity_global.translation + delta);

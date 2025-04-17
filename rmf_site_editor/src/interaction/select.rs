@@ -24,13 +24,11 @@ use crate::{
 use anyhow::{anyhow, Error as Anyhow};
 use bevy::{
     ecs::system::{StaticSystemParam, SystemParam},
+    math::Ray3d,
     prelude::*,
 };
 use bevy_impulse::*;
-use bevy_mod_raycast::{
-    deferred::{RaycastMesh, RaycastSource},
-    primitives::rays::Ray3d,
-};
+use bevy_mod_raycast::deferred::{RaycastMesh, RaycastSource};
 use rmf_site_format::{
     Category, Door, Edge, Lane, LiftProperties, Measurement, NameOfSite, Pending, PixelsPerMeter,
     Pose, Side, Wall,

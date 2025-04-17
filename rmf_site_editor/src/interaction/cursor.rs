@@ -20,8 +20,8 @@ use crate::{
     interaction::*,
     site::{AnchorBundle, ModelLoader, Pending, SiteAssets},
 };
-use bevy::{ecs::system::SystemParam, prelude::*, window::PrimaryWindow};
-use bevy_mod_raycast::primitives::{rays::Ray3d, Primitive3d};
+use bevy::math::prelude::InfinitePlane3d;
+use bevy::{ecs::system::SystemParam, picking::backend::ray::RayMap, prelude::*};
 
 use rmf_site_format::{FloorMarker, ModelInstance, WallMarker};
 use std::collections::HashSet;
@@ -266,20 +266,16 @@ pub struct Preview;
 
 #[derive(SystemParam)]
 pub struct IntersectGroundPlaneParams<'w, 's> {
-    primary_windows: Query<'w, 's, &'static Window, With<PrimaryWindow>>,
     camera_controls: Res<'w, CameraControls>,
-    cameras: Query<'w, 's, &'static Camera>,
     global_transforms: Query<'w, 's, &'static GlobalTransform>,
-    primary_window: Query<'w, 's, &'static Window, With<PrimaryWindow>>,
+    ray_map: Res<'w, RayMap>,
 }
 
 impl<'w, 's> IntersectGroundPlaneParams<'w, 's> {
     pub fn ground_plane_intersection(&self) -> Option<Transform> {
-        let ground_plane = Primitive3d::Plane {
-            point: Vec3::ZERO,
-            normal: Vec3::Z,
-        };
-        self.primitive_intersection(ground_plane)
+        let origin = Vec3::ZERO;
+        let ground_plane = InfinitePlane3d::new(Dir3::Z);
+        self.plane_intersection(origin, ground_plane)
     }
 
     pub fn frame_plane_intersection(&self, frame: Entity) -> Option<Transform> {
@@ -287,31 +283,23 @@ impl<'w, 's> IntersectGroundPlaneParams<'w, 's> {
         let affine = tf.affine();
         let point = affine.translation.into();
         let normal = affine.matrix3.col(2).into();
-        self.primitive_intersection(Primitive3d::Plane { point, normal })
+        self.plane_intersection(point, InfinitePlane3d::new(Dir3::new(normal)))
     }
 
-    pub fn primitive_intersection(&self, primitive: Primitive3d) -> Option<Transform> {
-        let window = self.primary_windows.get_single().ok()?;
-        let cursor_position = window.cursor_position()?;
+    pub fn plane_intersection(&self, origin: Vec3, plane: InfinitePlane3d) -> Option<Transform> {
         let e_active_camera = self.camera_controls.active_camera();
-        let active_camera = self.cameras.get(e_active_camera).ok()?;
-        let camera_tf = self.global_transforms.get(e_active_camera).ok()?;
-        let primary_window = self.primary_window.get_single().ok()?;
-        let ray =
-            Ray3d::from_screenspace(cursor_position, active_camera, camera_tf, primary_window)?;
-
-        let n = *match &primitive {
-            Primitive3d::Plane { normal, .. } => normal,
-            _ => {
-                warn!("Unsupported primitive type found");
-                return None;
-            }
+        let Some((_, ray)) = self
+            .ray_map
+            .iter()
+            .find(|(ray_id, _)| ray_id.camera == e_active_camera)
+        else {
+            return None;
         };
-        let p = ray
-            .intersects_primitive(primitive)
-            .map(|intersection| intersection.position())?;
 
-        Some(Transform::from_translation(p).with_rotation(aligned_z_axis(n)))
+        let p = ray
+            .intersect_plane(origin, plane)
+            .map(|distance| ray.get_point(distance))?;
+        Some(Transform::from_translation(p).with_rotation(aligned_z_axis(ray.direction.as_vec3())))
     }
 }
 

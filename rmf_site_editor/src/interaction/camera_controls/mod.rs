@@ -16,7 +16,7 @@
 */
 use crate::interaction::{InteractionAssets, PickingBlockers};
 use bevy::{
-    core_pipeline::{core_3d::Camera3dBundle, tonemapping::Tonemapping},
+    core_pipeline::tonemapping::Tonemapping,
     prelude::*,
     render::{
         camera::{Camera, ClearColorConfig, Projection, ScalingMode},
@@ -267,17 +267,16 @@ impl FromWorld for CameraControls {
         ]
         .map(|(order, layer)| {
             world
-                .spawn(Camera3dBundle {
-                    projection: Projection::Perspective(Default::default()),
-                    camera: Camera {
+                .spawn(Camera3d::default())
+                .insert((
+                    Projection::Perspective(Default::default()),
+                    Camera {
                         order,
                         clear_color: ClearColorConfig::None,
                         ..default()
                     },
-                    camera_3d: Camera3d { ..default() },
-                    tonemapping: Tonemapping::ReinhardLuminance,
-                    ..default()
-                })
+                    Tonemapping::ReinhardLuminance,
+                ))
                 .insert(VisibilityBundle {
                     visibility: Visibility::Inherited,
                     ..default()
@@ -287,12 +286,12 @@ impl FromWorld for CameraControls {
         });
 
         let perspective_base_camera = world
-            .spawn(Camera3dBundle {
-                transform: Transform::from_xyz(-10., -10., 10.).looking_at(Vec3::ZERO, Vec3::Z),
-                projection: Projection::Perspective(Default::default()),
-                tonemapping: Tonemapping::ReinhardLuminance,
-                ..default()
-            })
+            .spawn(Camera3d::default())
+            .insert((
+                Transform::from_xyz(-10., -10., 10.).looking_at(Vec3::ZERO, Vec3::Z),
+                Projection::Perspective(Default::default()),
+                Tonemapping::ReinhardLuminance,
+            ))
             .insert(VisibilityBundle {
                 visibility: Visibility::Inherited,
                 ..default()
@@ -333,18 +332,17 @@ impl FromWorld for CameraControls {
         ]
         .map(|(order, layer)| {
             world
-                .spawn(Camera3dBundle {
-                    camera: Camera {
+                .spawn(Camera3d::default())
+                .insert((
+                    Camera {
                         is_active: false,
                         order,
                         clear_color: ClearColorConfig::None,
                         ..default()
                     },
-                    camera_3d: Camera3d { ..default() },
-                    projection: Projection::Orthographic(ortho_projection.clone()),
-                    tonemapping: Tonemapping::ReinhardLuminance,
-                    ..default()
-                })
+                    Projection::Orthographic(ortho_projection.clone()),
+                    Tonemapping::ReinhardLuminance,
+                ))
                 .insert(VisibilityBundle {
                     visibility: Visibility::Inherited,
                     ..default()
@@ -354,16 +352,16 @@ impl FromWorld for CameraControls {
         });
 
         let orthographic_camera_entity = world
-            .spawn(Camera3dBundle {
-                camera: Camera {
+            .spawn(Camera3d::default())
+            .insert((
+                Camera {
                     is_active: false,
                     ..default()
                 },
-                transform: Transform::from_xyz(0., 0., 20.).looking_at(Vec3::ZERO, Vec3::Y),
-                projection: Projection::Orthographic(ortho_projection),
-                tonemapping: Tonemapping::ReinhardLuminance,
-                ..default()
-            })
+                Transform::from_xyz(0., 0., 20.).looking_at(Vec3::ZERO, Vec3::Y),
+                Projection::Orthographic(ortho_projection),
+                Tonemapping::ReinhardLuminance,
+            ))
             .insert(VisibilityBundle {
                 visibility: Visibility::Inherited,
                 ..default()

@@ -45,15 +45,15 @@ pub fn add_physical_camera_visuals(
             ]),
         };
         let child = commands
-            .spawn(Camera3dBundle {
-                transform: camera_sensor_transform.transform(),
-                camera: Camera {
+            .spawn(Camera3d::default())
+            .insert((
+                camera_sensor_transform.transform(),
+                Camera {
                     is_active: false,
                     ..default()
                 },
-                tonemapping: Tonemapping::ReinhardLuminance,
-                ..default()
-            })
+                Tonemapping::ReinhardLuminance,
+            ))
             .id();
         commands.entity(e).push_children(&[child]);
     }

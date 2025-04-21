@@ -18,6 +18,7 @@
 use bevy::math::Affine3A;
 use bevy::render::render_asset::RenderAssetUsages;
 use bevy::{
+    math::primitives,
     prelude::*,
     render::{
         mesh::{Indices, PrimitiveTopology, VertexAttributeValues},
@@ -871,7 +872,7 @@ pub(crate) fn make_physical_camera_mesh() -> Mesh {
     let lens_hood_protrusion = 0.8;
 
     // Main body
-    let mut mesh: Mesh = shape::Box::new(scale, scale, scale).into();
+    let mut mesh: Mesh = primitives::Cuboid::new(scale, scale, scale).into();
     mesh.remove_attribute(Mesh::ATTRIBUTE_UV_0);
 
     // Outside of the lens hood

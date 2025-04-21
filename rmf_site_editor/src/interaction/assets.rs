@@ -15,13 +15,16 @@
  *
 */
 
+use crate::shapes::Circle;
 use crate::{interaction::*, shapes::*};
-use bevy::{math::Affine3A, prelude::*};
+use bevy::{
+    math::{primitives, Affine3A},
+    prelude::*,
+};
 use bevy_polyline::{
     material::PolylineMaterial,
     polyline::{Polyline, PolylineBundle},
 };
-use shape::UVSphere;
 
 #[derive(Clone, Debug, Resource)]
 pub struct InteractionAssets {
@@ -231,20 +234,14 @@ impl FromWorld for InteractionAssets {
         let mut meshes = world.get_resource_mut::<Assets<Mesh>>().unwrap();
         let dagger_mesh = meshes.add(make_dagger_mesh());
         let halo_mesh = meshes.add(make_halo_mesh());
-        let camera_control_mesh = meshes.add(Mesh::from(UVSphere {
-            radius: 0.02,
-            ..Default::default()
-        }));
+        let camera_control_mesh = meshes.add(Mesh::from(primitives::Sphere::new(0.02)));
         let arrow_mesh = meshes.add(make_cylinder_arrow_mesh());
         let point_light_socket_mesh = meshes.add(
             make_cylinder(0.06, 0.02)
                 .transform_by(Affine3A::from_translation(0.04 * Vec3::Z))
                 .into(),
         );
-        let point_light_shine_mesh = meshes.add(Mesh::from(shape::UVSphere {
-            radius: 0.05,
-            ..Default::default()
-        }));
+        let point_light_shine_mesh = meshes.add(Mesh::from(primitives::Sphere::new(0.05)));
         let spot_light_cover_mesh = meshes.add(
             make_smooth_wrap(
                 [
@@ -263,20 +260,8 @@ impl FromWorld for InteractionAssets {
         );
         let spot_light_shine_mesh = meshes.add(
             Mesh::from(
-                make_bottom_circle(
-                    Circle {
-                        radius: 0.05,
-                        height: 0.0,
-                    },
-                    32,
-                )
-                .merge_with(make_top_circle(
-                    Circle {
-                        radius: 0.01,
-                        height: 0.04,
-                    },
-                    32,
-                )),
+                make_bottom_circle(Cylinder::new(0.05, 0.0), 32)
+                    .merge_with(make_top_circle(Cylinder::new(0.01, 0.04), 32)),
             )
             .with_generated_outline_normals()
             .unwrap(),

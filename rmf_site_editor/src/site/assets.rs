@@ -15,8 +15,13 @@
  *
 */
 
+use crate::shapes::Circle;
 use crate::{shapes::*, site::*};
-use bevy::{asset::embedded_asset, math::Affine3A, prelude::*};
+use bevy::{
+    asset::embedded_asset,
+    math::{primitives, Affine3A},
+    prelude::*,
+};
 
 pub(crate) fn add_site_icons(app: &mut App) {
     // Taken from https://github.com/bevyengine/bevy/issues/10377#issuecomment-1858797002
@@ -183,21 +188,17 @@ impl FromWorld for SiteAssets {
 
         let mut meshes = world.get_resource_mut::<Assets<Mesh>>().unwrap();
         let level_anchor_mesh = meshes.add(
-            Mesh::from(shape::UVSphere {
-                radius: 0.05, // TODO(MXG): Make the vertex radius configurable
-                ..Default::default()
-            })
-            .with_generated_outline_normals()
-            .unwrap(),
+            Mesh::from(primitives::Sphere::new(0.05)) // TODO(MXG): Make the vertex radius configurable
+                .with_generated_outline_normals()
+                .unwrap(),
         );
         let lift_anchor_mesh = meshes
             .add(Mesh::from(make_diamond(0.15 / 2.0, 0.15).transform_by(
                 Affine3A::from_translation([0.0, 0.0, 0.15 / 2.0].into()),
             )));
-        let site_anchor_mesh = meshes.add(Mesh::from(shape::UVSphere {
-            radius: 0.05, // TODO(MXG): Make the vertex radius configurable
-            ..Default::default()
-        }));
+        let site_anchor_mesh = meshes.add(
+            Mesh::from(primitives::Sphere::new(0.05)), // TODO(MXG): Make the vertex radius configurable
+        );
         let lane_mid_mesh = meshes.add(make_flat_square_mesh(1.0).into());
         let lane_mid_outline = meshes.add(make_flat_rect_mesh(1.0, 1.125).into());
         let lane_end_mesh = meshes.add(
@@ -221,7 +222,7 @@ impl FromWorld for SiteAssets {
             .into(),
         );
         let box_mesh = meshes.add(
-            Mesh::from(shape::Box::new(1., 1., 1.))
+            Mesh::from(primitives::Cuboid::new(1., 1., 1.))
                 .with_generated_outline_normals()
                 .unwrap(),
         );

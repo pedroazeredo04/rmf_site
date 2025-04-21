@@ -8,7 +8,7 @@ use crate::spawner::Spawner;
 use crate::vertex::Vertex;
 use crate::wall::{Wall, WallProperties};
 use crate::AppState;
-use bevy::prelude::*;
+use bevy::{math::primitives::Plane2d, prelude::*};
 use bevy_egui::{egui, EguiContext};
 
 #[derive(Default, Clone)]
@@ -208,6 +208,7 @@ fn warehouse_generator(
     }
 
     commands.spawn(PbrBundle {
+        // TODO(@xiyuoh) update shape::Plane
         mesh: meshes.add(Mesh::from(shape::Plane { size: width as f32 })),
         material: material_map
             .materials

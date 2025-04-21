@@ -277,10 +277,7 @@ impl FromWorld for CameraControls {
                     },
                     Tonemapping::ReinhardLuminance,
                 ))
-                .insert(VisibilityBundle {
-                    visibility: Visibility::Inherited,
-                    ..default()
-                })
+                .insert(Visibility::Inherited)
                 .insert(RenderLayers::layer(layer))
                 .id()
         });
@@ -292,10 +289,7 @@ impl FromWorld for CameraControls {
                 Projection::Perspective(Default::default()),
                 Tonemapping::ReinhardLuminance,
             ))
-            .insert(VisibilityBundle {
-                visibility: Visibility::Inherited,
-                ..default()
-            })
+            .insert(Visibility::Inherited)
             .insert(RenderLayers::from_layers(&[
                 GENERAL_RENDER_LAYER,
                 VISUAL_CUE_RENDER_LAYER,
@@ -343,10 +337,7 @@ impl FromWorld for CameraControls {
                     Projection::Orthographic(ortho_projection.clone()),
                     Tonemapping::ReinhardLuminance,
                 ))
-                .insert(VisibilityBundle {
-                    visibility: Visibility::Inherited,
-                    ..default()
-                })
+                .insert(Visibility::Inherited)
                 .insert(RenderLayers::layer(layer))
                 .id()
         });
@@ -362,10 +353,7 @@ impl FromWorld for CameraControls {
                 Projection::Orthographic(ortho_projection),
                 Tonemapping::ReinhardLuminance,
             ))
-            .insert(VisibilityBundle {
-                visibility: Visibility::Inherited,
-                ..default()
-            })
+            .insert(Visibility::Inherited)
             .insert(RenderLayers::from_layers(&[
                 GENERAL_RENDER_LAYER,
                 VISUAL_CUE_RENDER_LAYER,

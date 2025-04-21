@@ -186,7 +186,7 @@ pub fn spawn_scene_for_loaded_model(
         })
         .add_child(model_id);
     if world.get::<Visibility>(parent).is_none() {
-        world.entity_mut(parent).insert(VisibilityBundle::default());
+        world.entity_mut(parent).insert(Visibility::default());
     }
     Some((model_id, is_scene))
 }

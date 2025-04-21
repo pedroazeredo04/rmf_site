@@ -156,10 +156,10 @@ pub fn spawn_scene_for_loaded_model(
             .as_ref()
             .or_else(|| gltf.scenes.get(0))
             .cloned()?;
-        Some((world.spawn(SceneBundle { scene, ..default() }).id(), true))
+        Some((world.spawn(SceneRoot(scene)).id(), true))
     } else if type_id == TypeId::of::<Scene>() {
         let scene = h.typed::<Scene>();
-        Some((world.spawn(SceneBundle { scene, ..default() }).id(), true))
+        Some((world.spawn(SceneRoot(scene)).id(), true))
     } else if type_id == TypeId::of::<Mesh>() {
         let site_assets = world.resource::<SiteAssets>();
         let mesh = h.typed::<Mesh>();

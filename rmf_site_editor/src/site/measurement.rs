@@ -51,12 +51,12 @@ pub fn add_measurement_visuals(
         transform.translation.z = DEFAULT_MEASUREMENT_HEIGHT;
 
         let child_id = commands
-            .spawn(PbrBundle {
-                mesh: assets.lane_mid_mesh.clone(),
-                material: assets.measurement_material.clone(),
+            .spawn((
+                Mesh3d(assets.lane_mid_mesh.clone()),
+                MeshMaterial3d(assets.measurement_material.clone()),
                 transform,
-                ..default()
-            })
+                Visibility::default(),
+            ))
             .insert(Selectable::new(e))
             .id();
 

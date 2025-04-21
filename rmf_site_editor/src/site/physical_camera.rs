@@ -27,12 +27,12 @@ pub fn add_physical_camera_visuals(
     for (e, pose) in &physical_cameras {
         commands
             .entity(e)
-            .insert(PbrBundle {
-                mesh: assets.physical_camera_mesh.clone(),
-                material: assets.physical_camera_material.clone(),
-                transform: pose.transform(),
-                ..default()
-            })
+            .insert((
+                Mesh3d(assets.physical_camera_mesh.clone()),
+                MeshMaterial3d(assets.physical_camera_material.clone()),
+                pose.transform(),
+                Visibility::default(),
+            ))
             .insert(Selectable::new(e))
             .insert(Category::Camera);
         // Now insert the camera as a child, needed to transform it

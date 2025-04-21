@@ -196,12 +196,12 @@ pub fn handle_loaded_drawing(
                 let z = drawing_layer_height(rank);
                 commands
                     .entity(leaf)
-                    .insert(PbrBundle {
-                        mesh,
-                        material: material.clone(),
-                        transform: Transform::from_xyz(0.0, 0.0, z),
-                        ..Default::default()
-                    })
+                    .insert((
+                        Mesh3d(mesh),
+                        MeshMaterial3d(material.clone()),
+                        Transform::from_xyz(0.0, 0.0, z),
+                        Visibility::default(),
+                    ))
                     .insert(Selectable::new(entity));
                 commands
                     .entity(entity)

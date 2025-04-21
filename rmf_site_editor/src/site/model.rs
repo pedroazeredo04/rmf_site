@@ -165,11 +165,12 @@ pub fn spawn_scene_for_loaded_model(
         let mesh = h.typed::<Mesh>();
         Some((
             world
-                .spawn(PbrBundle {
-                    mesh,
-                    material: site_assets.default_mesh_grey_material.clone(),
-                    ..default()
-                })
+                .spawn((
+                    Mesh3d(mesh),
+                    MeshMaterial3d(site_assets.default_mesh_grey_material.clone()),
+                    Transform::default(),
+                    Visibility::default(),
+                ))
                 .id(),
             false,
         ))

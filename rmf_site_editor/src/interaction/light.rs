@@ -87,19 +87,21 @@ pub fn add_physical_light_visual_cues(
             .spawn((Transform::default(), point_visibility))
             .with_children(|point| {
                 point
-                    .spawn(PbrBundle {
-                        mesh: assets.point_light_socket_mesh.clone(),
-                        material: assets.physical_light_cover_material.clone(),
-                        ..default()
-                    })
+                    .spawn((
+                        Mesh3d(assets.point_light_socket_mesh.clone()),
+                        MeshMaterial3d(assets.physical_light_cover_material.clone()),
+                        Transform::default(),
+                        Visibility::default(),
+                    ))
                     .insert(DragPlaneBundle::new(e, Vec3::Z).globally());
 
                 point
-                    .spawn(PbrBundle {
-                        mesh: assets.point_light_shine_mesh.clone(),
-                        material: light_material.clone(),
-                        ..default()
-                    })
+                    .spawn((
+                        Mesh3d(assets.point_light_shine_mesh.clone()),
+                        MeshMaterial3d(light_material.clone()),
+                        Transform::default(),
+                        Visibility::default(),
+                    ))
                     .insert(DragPlaneBundle::new(e, Vec3::Z).globally());
             })
             .id();
@@ -112,18 +114,20 @@ pub fn add_physical_light_visual_cues(
         let spot = commands
             .spawn((Transform::default(), spot_visibility))
             .with_children(|spot| {
-                spot.spawn(PbrBundle {
-                    mesh: assets.spot_light_cover_mesh.clone(),
-                    material: assets.physical_light_cover_material.clone(),
-                    ..default()
-                })
+                spot.spawn((
+                    Mesh3d(assets.spot_light_cover_mesh.clone()),
+                    MeshMaterial3d(assets.physical_light_cover_material.clone()),
+                    Transform::default(),
+                    Visibility::default(),
+                ))
                 .insert(DragPlaneBundle::new(e, Vec3::Z).globally());
 
-                spot.spawn(PbrBundle {
-                    mesh: assets.spot_light_shine_mesh.clone(),
-                    material: light_material.clone(),
-                    ..default()
-                })
+                spot.spawn((
+                    Mesh3d(assets.spot_light_shine_mesh.clone()),
+                    MeshMaterial3d(light_material.clone()),
+                    Transform::default(),
+                    Visibility::default(),
+                ))
                 .insert(DragPlaneBundle::new(e, Vec3::Z).globally());
             })
             .id();
@@ -136,18 +140,20 @@ pub fn add_physical_light_visual_cues(
         let directional = commands
             .spawn((Transform::default(), directional_visibility))
             .with_children(|dir| {
-                dir.spawn(PbrBundle {
-                    mesh: assets.directional_light_cover_mesh.clone(),
-                    material: assets.direction_light_cover_material.clone(),
-                    ..default()
-                })
+                dir.spawn((
+                    Mesh3d(assets.directional_light_cover_mesh.clone()),
+                    MeshMaterial3d(assets.direction_light_cover_material.clone()),
+                    Transform::default(),
+                    Visibility::default(),
+                ))
                 .insert(DragPlaneBundle::new(e, Vec3::Z).globally());
 
-                dir.spawn(PbrBundle {
-                    mesh: assets.directional_light_shine_mesh.clone(),
-                    material: light_material.clone(),
-                    ..default()
-                })
+                dir.spawn((
+                    Mesh3d(assets.directional_light_shine_mesh.clone()),
+                    MeshMaterial3d(light_material.clone()),
+                    Transform::default(),
+                    Visibility::default(),
+                ))
                 .insert(DragPlaneBundle::new(e, Vec3::Z).globally());
             })
             .id();

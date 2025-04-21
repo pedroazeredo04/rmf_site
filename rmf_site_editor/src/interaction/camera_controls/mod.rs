@@ -244,11 +244,12 @@ impl FromWorld for CameraControls {
         );
         let selection_mesh = interaction_assets.camera_control_mesh.clone();
         let selection_marker = world
-            .spawn(PbrBundle {
-                mesh: selection_mesh,
-                visibility: Visibility::Visible,
-                ..default()
-            })
+            .spawn((
+                Mesh3d(selection_mesh),
+                Visibility::Visible,
+                Transform::default(),
+                MeshMaterial3d::default(),
+            ))
             .id();
 
         let perspective_headlight = world

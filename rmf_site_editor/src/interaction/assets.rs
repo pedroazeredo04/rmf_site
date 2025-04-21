@@ -81,14 +81,14 @@ impl InteractionAssets {
         scale: f32,
     ) -> Entity {
         let child_entity = commands
-            .spawn(PbrBundle {
-                transform: Transform::from_rotation(rotation)
+            .spawn((
+                Transform::from_rotation(rotation)
                     .with_translation(offset)
                     .with_scale(Vec3::splat(scale)),
-                mesh: self.arrow_mesh.clone(),
-                material: material_set.passive.clone(),
-                ..default()
-            })
+                Mesh3d(self.arrow_mesh.clone()),
+                MeshMaterial3d(material_set.passive.clone()),
+                Visibility::default(),
+            ))
             .set_parent(parent)
             .id();
 

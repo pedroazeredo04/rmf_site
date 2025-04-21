@@ -262,11 +262,12 @@ pub fn add_floor_visuals(
         });
 
         let mesh_entity_id = commands
-            .spawn(PbrBundle {
-                mesh: meshes.add(mesh),
-                material,
-                ..default()
-            })
+            .spawn((
+                Mesh3d(meshes.add(mesh)),
+                MeshMaterial3d(material),
+                Transform::default(),
+                Visibility::default(),
+            ))
             .insert(Selectable::new(e))
             .id();
 

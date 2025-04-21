@@ -50,7 +50,9 @@ pub struct CurrentEditDrawing {
 
 impl FromWorld for CurrentEditDrawing {
     fn from_world(world: &mut World) -> Self {
-        let editor = world.spawn(SpatialBundle::default()).id();
+        let editor = world
+            .spawn((Transform::default(), Visibility::default()))
+            .id();
         Self {
             editor,
             target: None,

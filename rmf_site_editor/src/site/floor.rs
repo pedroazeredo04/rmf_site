@@ -272,10 +272,7 @@ pub fn add_floor_visuals(
 
         commands
             .entity(e)
-            .insert(SpatialBundle {
-                transform: Transform::from_xyz(0.0, 0.0, height),
-                ..default()
-            })
+            .insert((Transform::from_xyz(0.0, 0.0, height), Visibility::default()))
             .insert(FloorSegments {
                 mesh: mesh_entity_id,
             })

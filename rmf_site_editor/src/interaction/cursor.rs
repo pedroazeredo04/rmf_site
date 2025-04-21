@@ -237,10 +237,7 @@ impl FromWorld for Cursor {
                 site_anchor_placement,
                 frame_placement,
             ])
-            .insert(SpatialBundle {
-                visibility: Visibility::Hidden,
-                ..default()
-            })
+            .insert((Transform::default(), Visibility::Hidden))
             .id();
 
         Self {

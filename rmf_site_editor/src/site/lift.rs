@@ -120,7 +120,7 @@ pub fn add_tags_to_lift(
     for (e, edge) in &new_lifts {
         let mut lift_cmds = commands.entity(e);
         lift_cmds
-            .insert(SpatialBundle::default())
+            .insert((Transform::default(), Visibility::default()))
             .insert(EdgeLabels::LeftRight)
             .insert(Category::Lift);
 
@@ -197,7 +197,7 @@ pub fn update_lift_cabin(
                     .into();
 
                 let cabin_entity = commands
-                    .spawn(SpatialBundle::from_transform(cabin_tf))
+                    .spawn((cabin_tf, Visibility::Visible))
                     .with_children(|parent| {
                         parent
                             .spawn(PbrBundle {
@@ -301,7 +301,7 @@ pub fn update_lift_cabin(
             }
             None => {
                 let group = commands
-                    .spawn(SpatialBundle::from_transform(cabin_tf))
+                    .spawn((cabin_tf, Visibility::Visible))
                     .insert(CabinAnchorGroupBundle::default())
                     .id();
                 commands

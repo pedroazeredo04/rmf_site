@@ -78,15 +78,13 @@ pub fn add_physical_light_visual_cues(
             headlight_toggle.0 = false;
         }
 
+        let point_visibility = if kind.is_point() {
+            Visibility::Inherited
+        } else {
+            Visibility::Hidden
+        };
         let point = commands
-            .spawn(SpatialBundle {
-                visibility: if kind.is_point() {
-                    Visibility::Inherited
-                } else {
-                    Visibility::Hidden
-                },
-                ..default()
-            })
+            .spawn((Transform::default(), point_visibility))
             .with_children(|point| {
                 point
                     .spawn(PbrBundle {
@@ -106,15 +104,13 @@ pub fn add_physical_light_visual_cues(
             })
             .id();
 
+        let spot_visibility = if kind.is_point() {
+            Visibility::Inherited
+        } else {
+            Visibility::Hidden
+        };
         let spot = commands
-            .spawn(SpatialBundle {
-                visibility: if kind.is_spot() {
-                    Visibility::Inherited
-                } else {
-                    Visibility::Hidden
-                },
-                ..default()
-            })
+            .spawn((Transform::default(), spot_visibility))
             .with_children(|spot| {
                 spot.spawn(PbrBundle {
                     mesh: assets.spot_light_cover_mesh.clone(),
@@ -132,15 +128,13 @@ pub fn add_physical_light_visual_cues(
             })
             .id();
 
+        let directional_visibility = if kind.is_point() {
+            Visibility::Inherited
+        } else {
+            Visibility::Hidden
+        };
         let directional = commands
-            .spawn(SpatialBundle {
-                visibility: if kind.is_directional() {
-                    Visibility::Inherited
-                } else {
-                    Visibility::Hidden
-                },
-                ..default()
-            })
+            .spawn((Transform::default(), directional_visibility))
             .with_children(|dir| {
                 dir.spawn(PbrBundle {
                     mesh: assets.directional_light_cover_mesh.clone(),

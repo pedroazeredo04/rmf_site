@@ -335,11 +335,7 @@ pub fn add_door_visuals(
 
         commands
             .entity(e)
-            .insert(SpatialBundle {
-                transform: pose_tf,
-                visibility,
-                ..default()
-            })
+            .insert((pose_tf, visibility))
             .insert(DoorSegments {
                 body,
                 cue_inner,

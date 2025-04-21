@@ -131,7 +131,7 @@ impl InteractionAssets {
         cue: &mut AnchorVisualization,
     ) {
         let drag_parent = commands
-            .spawn(SpatialBundle::default())
+            .spawn((Transform::default(), Visibility::default()))
             .insert(VisualCue::no_outline().irregular().always_xray())
             .set_parent(anchor)
             .id();
@@ -176,7 +176,7 @@ impl InteractionAssets {
         draggable: bool,
     ) {
         let drag_parent = commands
-            .spawn(SpatialBundle::default())
+            .spawn((Transform::default(), Visibility::default()))
             .insert(VisualCue::no_outline().irregular().always_xray())
             .id();
         commands.entity(anchor).add_child(drag_parent);

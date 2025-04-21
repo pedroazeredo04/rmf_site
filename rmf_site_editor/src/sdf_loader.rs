@@ -215,7 +215,7 @@ fn spawn_geometry<'a, 'b>(
                     })
                     .insert(pose)
                     .insert(NameInSite(geometry_name.to_owned()))
-                    .insert(SpatialBundle::INHERITED_IDENTITY)
+                    .insert((Transform::IDENTITY, Visibility::Inherited))
                     .id(),
             )
         }
@@ -227,7 +227,7 @@ fn spawn_geometry<'a, 'b>(
                 })
                 .insert(pose)
                 .insert(NameInSite(geometry_name.to_owned()))
-                .insert(SpatialBundle::INHERITED_IDENTITY)
+                .insert((Transform::IDENTITY, Visibility::Inherited))
                 .id(),
         ),
         SdfGeometry::Cylinder(c) => Some(
@@ -238,7 +238,7 @@ fn spawn_geometry<'a, 'b>(
                 })
                 .insert(pose)
                 .insert(NameInSite(geometry_name.to_owned()))
-                .insert(SpatialBundle::INHERITED_IDENTITY)
+                .insert((Transform::IDENTITY, Visibility::Inherited))
                 .id(),
         ),
         SdfGeometry::Sphere(s) => Some(
@@ -248,7 +248,7 @@ fn spawn_geometry<'a, 'b>(
                 })
                 .insert(pose)
                 .insert(NameInSite(geometry_name.to_owned()))
-                .insert(SpatialBundle::INHERITED_IDENTITY)
+                .insert((Transform::IDENTITY, Visibility::Inherited))
                 .id(),
         ),
         _ => None,
@@ -266,13 +266,15 @@ fn load_model<'a, 'b>(
         Ok(root) => {
             if let Some(model) = root.model {
                 let mut world = World::default();
-                let e = world.spawn(SpatialBundle::INHERITED_IDENTITY).id();
+                let e = world
+                    .insert((Transform::IDENTITY, Visibility::Inherited))
+                    .id();
                 // TODO(luca) hierarchies and joints, rather than flat link importing
                 // All Open-RMF assets have no hierarchy, for now.
                 for link in &model.link {
                     let link_pose = parse_pose(&link.pose);
                     let link_id = world
-                        .spawn(SpatialBundle::from_transform(link_pose.transform()))
+                        .spawn((link_pose.transform(), Visibility::Visible))
                         .id();
                     world.entity_mut(e).add_child(link_id);
                     for visual in &link.visual {

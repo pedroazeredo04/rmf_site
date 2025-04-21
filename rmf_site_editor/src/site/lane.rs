@@ -127,10 +127,7 @@ pub fn add_lane_visuals(
         // Create a "layer" entity that manages the height of the lane,
         // determined by the DisplayHeight of the graph.
         let layer = commands
-            .spawn(SpatialBundle {
-                transform: Transform::from_xyz(0.0, 0.0, height),
-                ..default()
-            })
+            .spawn((Transform::from_xyz(0.0, 0.0, height), Visibility::default()))
             .set_parent(e)
             .id();
 
@@ -185,11 +182,10 @@ pub fn add_lane_visuals(
                 end,
                 outlines: [start_outline, mid_outline, end_outline],
             })
-            .insert(SpatialBundle {
-                transform: Transform::from_translation([0., 0., LANE_LAYER_START].into()),
+            .insert((
+                Transform::from_translation([0., 0., LANE_LAYER_START].into()),
                 visibility,
-                ..default()
-            })
+            ))
             .insert(Category::Lane)
             .insert(EdgeLabels::StartEnd);
     }

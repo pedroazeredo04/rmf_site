@@ -219,7 +219,9 @@ pub fn add_fiducial_visuals(
         }
 
         if tf.is_none() {
-            commands.entity(e).insert(SpatialBundle::INHERITED_IDENTITY);
+            commands
+                .entity(e)
+                .insert((Transform::IDENTITY, Visibility::Inherited));
         }
 
         commands

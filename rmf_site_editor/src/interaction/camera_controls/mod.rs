@@ -253,12 +253,9 @@ impl FromWorld for CameraControls {
             .id();
 
         let perspective_headlight = world
-            .spawn(DirectionalLightBundle {
-                directional_light: DirectionalLight {
-                    shadows_enabled: false,
-                    illuminance: 20000.,
-                    ..default()
-                },
+            .spawn(DirectionalLight {
+                shadows_enabled: false,
+                illuminance: 20000.,
                 ..default()
             })
             .id();
@@ -309,18 +306,17 @@ impl FromWorld for CameraControls {
             .id();
 
         let orthographic_headlight = world
-            .spawn(DirectionalLightBundle {
-                transform: Transform::from_rotation(Quat::from_axis_angle(
-                    Vec3::new(1., 1., 0.).normalize(),
-                    35_f32.to_radians(),
-                )),
-                directional_light: DirectionalLight {
+            .spawn((
+                DirectionalLight {
                     shadows_enabled: false,
                     illuminance: 20000.,
                     ..default()
                 },
-                ..default()
-            })
+                Transform::from_rotation(Quat::from_axis_angle(
+                    Vec3::new(1., 1., 0.).normalize(),
+                    35_f32.to_radians(),
+                )),
+            ))
             .id();
 
         let ortho_projection = OrthographicProjection {

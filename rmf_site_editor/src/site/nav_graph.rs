@@ -25,7 +25,7 @@ pub struct GraphSelect<'w, 's> {
         's,
         (
             Entity,
-            &'static Handle<StandardMaterial>,
+            &'static MeshMaterial3d<StandardMaterial>,
             &'static Visibility,
             &'static RecencyRank<NavGraphMarker>,
         ),

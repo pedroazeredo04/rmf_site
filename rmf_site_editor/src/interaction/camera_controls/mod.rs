@@ -485,7 +485,7 @@ fn update_orbit_center_marker(
         (
             &mut Transform,
             &mut Visibility,
-            &mut Handle<StandardMaterial>,
+            &mut MeshMaterial3d<StandardMaterial>,
         ),
         Without<Projection>,
     >,

@@ -31,7 +31,7 @@ pub struct EntityMeshMap {
 
 impl EntityMeshMap {
     /// Register the passed `entity` as having the passed `mesh_handle`.
-    fn register(&mut self, entity: Entity, mesh_handle: &Handle<Mesh>) {
+    fn register(&mut self, entity: Entity, mesh_handle: &Mesh3d) {
         // Note that this list can have duplicates if an entity is registered for a mesh multiple
         // times. This should be rare and only cause an additional `Aabb.clone()` in
         // `update_bounds` so it is preferable to a `HashSet` for now.
@@ -67,11 +67,11 @@ impl EntityMeshMap {
 }
 
 pub fn register_bounds(
-    new_aabb: Query<(Entity, &Handle<Mesh>), Added<Aabb>>,
+    new_aabb: Query<(Entity, &Mesh3d), Added<Aabb>>,
     mut entity_mesh_map: ResMut<EntityMeshMap>,
 ) {
     for (e, mesh) in &new_aabb {
-        entity_mesh_map.register(e, mesh.into());
+        entity_mesh_map.register(e, mesh);
     }
 }
 
@@ -85,10 +85,10 @@ pub fn register_bounds(
 pub fn update_bounds(
     mut commands: Commands,
     meshes: Res<Assets<Mesh>>,
-    mut mesh_reassigned: Query<(Entity, &Handle<Mesh>, &mut Aabb), Changed<Handle<Mesh>>>,
+    mut mesh_reassigned: Query<(Entity, &Mesh3d, &mut Aabb), Changed<Mesh3d>>,
     mut entity_mesh_map: ResMut<EntityMeshMap>,
     mut mesh_events: EventReader<AssetEvent<Mesh>>,
-    mut entities_lost_mesh: RemovedComponents<Handle<Mesh>>,
+    mut entities_lost_mesh: RemovedComponents<Mesh3d>,
 ) {
     for entity in entities_lost_mesh.read() {
         entity_mesh_map.deregister(entity);
@@ -96,9 +96,9 @@ pub fn update_bounds(
 
     for (entity, mesh_handle, mut aabb) in mesh_reassigned.iter_mut() {
         entity_mesh_map.deregister(entity);
-        if let Some(mesh) = meshes.get(mesh_handle) {
+        if let Some(mesh) = meshes.get(&mesh_handle.0) {
             if let Some(new_aabb) = mesh.compute_aabb() {
-                entity_mesh_map.register(entity, mesh_handle.into());
+                entity_mesh_map.register(entity, mesh_handle);
                 *aabb = new_aabb;
             }
         }

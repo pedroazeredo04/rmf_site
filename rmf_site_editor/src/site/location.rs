@@ -289,7 +289,7 @@ pub fn update_visibility_for_locations(
             &Point<Entity>,
             &AssociatedGraphs<Entity>,
             &mut Visibility,
-            &mut Handle<StandardMaterial>,
+            &mut MeshMaterial3d<StandardMaterial>,
             // &mut
         ),
         (With<LocationTags>, Without<NavGraphMarker>),

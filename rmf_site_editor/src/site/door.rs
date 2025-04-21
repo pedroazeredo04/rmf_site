@@ -364,7 +364,7 @@ fn update_door_visuals(
     segments: &DoorSegments,
     anchors: &AnchorParams,
     transforms: &mut Query<&mut Transform>,
-    mesh_handles: &mut Query<&mut Handle<Mesh>>,
+    mesh_handles: &mut Query<&mut Mesh3d>,
     mesh_assets: &mut ResMut<Assets<Mesh>>,
     assets: &Res<SiteAssets>,
 ) -> Option<DoorBodyType> {
@@ -421,7 +421,7 @@ pub fn update_changed_door(
     >,
     anchors: AnchorParams,
     mut transforms: Query<&mut Transform>,
-    mut mesh_handles: Query<&mut Handle<Mesh>>,
+    mut mesh_handles: Query<&mut Mesh3d>,
     mut mesh_assets: ResMut<Assets<Mesh>>,
     assets: Res<SiteAssets>,
 ) {
@@ -461,7 +461,7 @@ pub fn update_door_for_moved_anchors(
         ),
     >,
     mut transforms: Query<&mut Transform>,
-    mut mesh_handles: Query<&mut Handle<Mesh>>,
+    mut mesh_handles: Query<&mut Mesh3d>,
     mut mesh_assets: ResMut<Assets<Mesh>>,
     assets: Res<SiteAssets>,
 ) {

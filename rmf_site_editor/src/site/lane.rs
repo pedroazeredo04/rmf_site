@@ -308,7 +308,7 @@ pub fn update_visibility_for_lanes(
         (Entity, &AssociatedGraphs<Entity>, &LaneSegments),
         (With<LaneMarker>, Changed<AssociatedGraphs<Entity>>),
     >,
-    mut materials: Query<&mut Handle<StandardMaterial>, Without<NavGraphMarker>>,
+    mut materials: Query<&mut MeshMaterial3d<StandardMaterial>, Without<NavGraphMarker>>,
     mut transforms: Query<&mut Transform>,
     graph_changed_visibility: Query<
         (),

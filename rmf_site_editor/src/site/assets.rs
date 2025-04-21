@@ -297,7 +297,7 @@ impl SiteAssets {
         &self,
         anchor: Entity,
         deps: &Query<&Dependents>,
-    ) -> &Handle<StandardMaterial> {
+    ) -> &MeshMaterial3d<StandardMaterial> {
         if deps.get(anchor).ok().filter(|d| !d.is_empty()).is_some() {
             &self.passive_anchor_material
         } else {

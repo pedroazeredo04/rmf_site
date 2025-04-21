@@ -667,7 +667,7 @@ pub fn make_models_selectable(
     pending_or_previews: Query<(), Or<(With<Pending>, With<Preview>)>>,
     scene_roots: Query<&RenderLayers, With<ModelMarker>>,
     all_children: Query<&Children>,
-    mesh_handles: Query<&Handle<Mesh>>,
+    mesh_handles: Query<&Mesh3d>,
     mut mesh_assets: ResMut<Assets<Mesh>>,
 ) -> ModelLoadingRequest {
     // Pending items (i.e. mouse previews) should not be selectable
@@ -693,7 +693,7 @@ pub fn make_models_selectable(
             .insert(DragPlaneBundle::new(req.parent, Vec3::Z));
 
         if let Ok(mesh_handle) = mesh_handles.get(e) {
-            if let Some(mesh) = mesh_assets.get_mut(mesh_handle) {
+            if let Some(mesh) = mesh_assets.get_mut(mesh_handle.0) {
                 if mesh.generate_outline_normals().is_err() {
                     warn!(
                         "WARNING: Unable to generate outline normals for \
@@ -719,7 +719,7 @@ pub fn propagate_model_properties(
     render_layers: Query<&RenderLayers>,
     previews: Query<&Preview>,
     pendings: Query<&Pending>,
-    mesh_entities: Query<(), With<Handle<Mesh>>>,
+    mesh_entities: Query<(), With<Mesh3d>>,
     children: Query<&Children>,
 ) -> ModelLoadingRequest {
     propagate_model_property(
@@ -750,7 +750,7 @@ pub fn propagate_model_property<Property: Component + Clone + std::fmt::Debug>(
     root: Entity,
     property_query: &Query<&Property>,
     children: &Query<&Children>,
-    mesh_entities: &Query<(), With<Handle<Mesh>>>,
+    mesh_entities: &Query<(), With<Mesh3d>>,
     commands: &mut Commands,
 ) {
     let Ok(property) = property_query.get(root) else {

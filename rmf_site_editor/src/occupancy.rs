@@ -153,7 +153,7 @@ enum Group {
 fn calculate_grid(
     mut commands: Commands,
     mut request: EventReader<CalculateGrid>,
-    bodies: Query<(Entity, &Handle<Mesh>, &Aabb, &GlobalTransform)>,
+    bodies: Query<(Entity, &Mesh3d, &Aabb, &GlobalTransform)>,
     meta: Query<(
         Option<&Parent>,
         Option<&Category>,
@@ -207,7 +207,7 @@ fn calculate_grid(
 
             range = range.union_with(body_range);
 
-            if let Some(mesh) = meshes.get(mesh) {
+            if let Some(mesh) = meshes.get(mesh.0) {
                 if mesh.primitive_topology() != PrimitiveTopology::TriangleList {
                     continue;
                 }
@@ -345,7 +345,7 @@ fn get_group(
 }
 
 fn collect_physical_entities(
-    meshes: &Query<(Entity, &Handle<Mesh>, &Aabb, &GlobalTransform)>,
+    meshes: &Query<(Entity, &Mesh3d, &Aabb, &GlobalTransform)>,
     meta: &Query<(
         Option<&Parent>,
         Option<&Category>,

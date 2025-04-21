@@ -33,7 +33,7 @@ pub fn add_material_for_display_colors(
 }
 
 pub fn update_material_for_display_color(
-    changed_color: Query<(&DisplayColor, &Handle<StandardMaterial>), Changed<DisplayColor>>,
+    changed_color: Query<(&DisplayColor, &MeshMaterial3d<StandardMaterial>), Changed<DisplayColor>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
     for (color, material) in &changed_color {

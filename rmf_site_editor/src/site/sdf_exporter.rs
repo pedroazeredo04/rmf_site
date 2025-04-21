@@ -1,5 +1,6 @@
 use bevy::ecs::system::SystemState;
 use bevy::prelude::*;
+use bevy::render::mesh::Mesh3d;
 use bevy_gltf_export::{export_meshes, CompressGltfOptions, MeshData};
 
 use std::num::NonZeroU8;
@@ -106,7 +107,7 @@ pub fn collect_site_meshes(world: &mut World, site: Entity, folder: &Path) -> Re
         Query<(Entity, &IsStatic, &NameInSite), With<ModelMarker>>,
         Query<(), With<CollisionMeshMarker>>,
         Query<(), With<VisualMeshMarker>>,
-        Query<(&Handle<Mesh>, &Handle<StandardMaterial>)>,
+        Query<(&Mesh3d, &MeshMaterial3d<StandardMaterial>)>,
         Query<(&NameInSite, &LiftCabin<Entity>, &ChildLiftCabinGroup)>,
         Query<((), With<LiftDoormat>)>,
         Query<&GlobalTransform>,
@@ -156,7 +157,7 @@ pub fn collect_site_meshes(world: &mut World, site: Entity, folder: &Path) -> Re
         let Ok((mesh, material)) = q_pbr.get(entity) else {
             return None;
         };
-        let Some(mesh) = mesh_assets.get(mesh) else {
+        let Some(mesh) = mesh_assets.get(mesh.0) else {
             let site_id = q_site_ids.get(entity);
             warn!(
                 "Mesh asset not found for entity {:?} with Site ID {:?} while exporting assets",

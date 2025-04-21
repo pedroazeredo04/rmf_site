@@ -205,8 +205,8 @@ pub fn handle_loaded_drawing(
                     .insert(material)
                     .remove::<LoadingDrawing>();
             }
-            LoadState::Failed => {
-                error!("Failed loading drawing {:?}", source);
+            LoadState::Failed(error) => {
+                error!("Failed loading drawing {:?}! Error: {}", source, error);
                 commands.entity(entity).remove::<LoadingDrawing>();
             }
             _ => {}

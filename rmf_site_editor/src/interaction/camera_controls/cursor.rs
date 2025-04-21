@@ -19,11 +19,11 @@ use super::{
     get_groundplane_else_default_selection, orbit_camera_around_point, zoom_distance_factor,
     CameraCommandType, CameraControls, ProjectionMode, MAX_FOV, MAX_SCALE, MIN_FOV, MIN_SCALE,
 };
-use crate::interaction::SiteRaycastSet;
 use bevy::input::mouse::{MouseScrollUnit, MouseWheel};
+use bevy::math::Ray3d;
+use bevy::picking::backend::ray::RayMap;
 use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
-use bevy_mod_raycast::deferred::RaycastSource;
 use nalgebra::{Matrix3, Matrix3x1};
 
 pub const SCALE_ZOOM_SENSITIVITY: f32 = 0.1;
@@ -79,9 +79,10 @@ pub fn update_cursor_command(
     mut mouse_wheel: EventReader<MouseWheel>,
     mouse_input: Res<ButtonInput<MouseButton>>,
     keyboard_input: Res<ButtonInput<KeyCode>>,
-    raycast_sources: Query<&RaycastSource<SiteRaycastSet>>,
     cameras: Query<(&Projection, &Transform, &GlobalTransform)>,
     primary_windows: Query<&Window, With<PrimaryWindow>>,
+    ray_cast: MeshRayCast,
+    ray_map: Res<RayMap>,
 ) {
     if let Ok(window) = primary_windows.get_single() {
         // Return if cursor not within window
@@ -119,20 +120,20 @@ pub fn update_cursor_command(
         let (camera_proj, camera_transform, _) = cameras.get(active_camera_entity).unwrap();
 
         // Get selection under cursor, cursor direction
-        let Ok(cursor_raycast_source) = raycast_sources.get_single() else {
+        let active_camera = camera_controls.active_camera();
+        let Some((_, cursor_ray)) = ray_map
+            .iter()
+            .find(|(ray_id, _)| ray_id.camera == camera_controls.active_camera())
+        else {
             return;
         };
-        let cursor_ray = match cursor_raycast_source.get_ray() {
-            Some(ray) => ray,
-            None => return,
-        };
         let cursor_selection_new =
-            get_cursor_selected_point(&camera_transform, &cursor_raycast_source);
+            get_cursor_selected_point(&camera_transform, &cursor_ray, &ray_cast);
         let cursor_selection = match cursor_command.cursor_selection {
             Some(selection) => selection,
             None => cursor_selection_new,
         };
-        let cursor_direction = cursor_ray.direction().normalize();
+        let cursor_direction = cursor_ray.direction.normalize();
         let cursor_direction_camera_frame = camera_transform.rotation.inverse() * cursor_direction;
         let cursor_direction_camera_frame_prev = cursor_command
             .cursor_direction_camera_frame
@@ -368,15 +369,14 @@ fn pan_camera_with_cursor(
 /// Returns the object selected by the cursor, if none, defaults to ground plane or arbitrary point in front
 fn get_cursor_selected_point(
     camera_transform: &Transform,
-    cursor_raycast_source: &RaycastSource<SiteRaycastSet>,
+    cursor_ray: &Ray3d,
+    ray_cast: &MeshRayCast,
 ) -> Vec3 {
-    let cursor_ray = cursor_raycast_source.get_ray().unwrap();
-
-    match cursor_raycast_source.get_nearest_intersection() {
-        Some((_, intersection)) => intersection.position(),
+    match ray_cast.output.first() {
+        Some((_, intersection)) => intersection.point.clone(),
         None => get_groundplane_else_default_selection(
-            cursor_ray.origin(),
-            cursor_ray.direction(),
+            cursor_ray.origin.clone(),
+            cursor_ray.direction.clone(),
             camera_transform.forward(),
         ),
     }

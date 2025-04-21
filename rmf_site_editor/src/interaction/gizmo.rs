@@ -17,7 +17,6 @@
 
 use crate::interaction::*;
 use bevy::{math::Affine3A, picking::backend::ray::RayMap, prelude::*};
-use bevy_mod_raycast::deferred::{RaycastMesh, RaycastSource};
 use rmf_site_format::Pose;
 
 #[derive(Debug, Clone, Copy)]
@@ -252,11 +251,16 @@ pub struct MoveTo {
     pub transform: Transform,
 }
 
-pub fn make_gizmos_pickable(mut commands: Commands, new_gizmos: Query<Entity, Added<Gizmo>>) {
+pub fn make_gizmos_pickable(
+    mut commands: Commands,
+    mut picking_settings: ResMut<MeshPickingSettings>,
+    new_gizmos: Query<Entity, Added<Gizmo>>,
+) {
+    if !new_gizmos.is_empty() && !picking_settings.require_markers {
+        picking_settings.require_markers = true;
+    }
     for e in &new_gizmos {
-        commands
-            .entity(e)
-            .insert(RaycastMesh::<SiteRaycastSet>::default());
+        commands.entity(e).insert(RayCastPickable);
     }
 }
 
@@ -270,8 +274,8 @@ pub fn update_gizmo_click_start(
     gizmo_blocker: Res<GizmoBlockers>,
     mut visibility: Query<&mut Visibility>,
     mouse_button_input: Res<ButtonInput<MouseButton>>,
+    ray_cast: MeshRayCast,
     transforms: Query<(&Transform, &GlobalTransform)>,
-    raycast_sources: Query<&RaycastSource<SiteRaycastSet>>,
     mut cursor: ResMut<Cursor>,
     mut gizmo_state: ResMut<GizmoState>,
     mut picks: EventReader<ChangePick>,
@@ -328,11 +332,7 @@ pub fn update_gizmo_click_start(
     if clicking {
         if let GizmoState::Hovering(e) = *gizmo_state {
             click.send(GizmoClicked(e));
-            let Ok(source) = raycast_sources.get_single() else {
-                return;
-            };
-            if let Some(intersection) = source.get_nearest_intersection().map(|(_, i)| i.position())
-            {
+            if let Some(intersection) = ray_cast.output.first().map(|(_, hit)| hit.point) {
                 if let Ok((gizmo, Some(mut draggable), mut material)) = gizmos.get_mut(e) {
                     if let Ok((local_tf, global_tf)) = transforms.get(draggable.for_entity) {
                         selection_blocker.dragging = true;

@@ -28,7 +28,6 @@ use bevy::{
     prelude::*,
 };
 use bevy_impulse::*;
-use bevy_mod_raycast::deferred::{RaycastMesh, RaycastSource};
 use rmf_site_format::{
     Category, Door, Edge, Lane, LiftProperties, Measurement, NameOfSite, Pending, PixelsPerMeter,
     Pose, Side, Wall,
@@ -382,13 +381,15 @@ impl Default for SelectionBlockers {
 
 pub fn make_selectable_entities_pickable(
     mut commands: Commands,
+    mut picking_settings: ResMut<MeshPickingSettings>,
     new_selectables: Query<(Entity, &Selectable), Added<Selectable>>,
     targets: Query<(Option<&Hovered>, Option<&Selected>)>,
 ) {
+    if !new_selectables.is_empty() && !picking_settings.require_markers {
+        picking_settings.require_markers = true;
+    }
     for (entity, selectable) in &new_selectables {
-        commands
-            .entity(entity)
-            .insert(RaycastMesh::<SiteRaycastSet>::default());
+        commands.entity(entity).insert(RayCastPickable);
 
         if let Ok((hovered, selected)) = targets.get(selectable.element) {
             if hovered.is_none() {
@@ -894,7 +895,7 @@ pub fn inspector_cursor_transform(
     In(ContinuousService { key }): ContinuousServiceInput<(), ()>,
     orders: ContinuousQuery<(), ()>,
     cursor: Res<Cursor>,
-    raycast_sources: Query<&RaycastSource<SiteRaycastSet>>,
+    ray_cast: MeshRayCast,
     mut transforms: Query<&mut Transform>,
 ) {
     let Some(orders) = orders.view(&key) else {
@@ -905,10 +906,7 @@ pub fn inspector_cursor_transform(
         return;
     }
 
-    let Ok(source) = raycast_sources.get_single() else {
-        return;
-    };
-    let intersection = match source.get_nearest_intersection() {
+    let intersection = match ray_cast.output.first() {
         Some((_, intersection)) => intersection,
         None => {
             return;
@@ -922,6 +920,6 @@ pub fn inspector_cursor_transform(
         }
     };
 
-    let ray = Ray3d::new(intersection.position(), intersection.normal());
+    let ray = Ray3d::new(intersection.point.clone(), intersection.normal.clone());
     *transform = Transform::from_matrix(ray.to_aligned_transform([0., 0., 1.].into()));
 }

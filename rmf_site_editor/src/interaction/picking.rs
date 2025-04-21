@@ -16,8 +16,13 @@
 */
 
 use crate::interaction::*;
-use bevy::prelude::*;
-use bevy_mod_raycast::{deferred::RaycastSource, immediate::RaycastVisibility};
+use bevy::{
+    picking::{
+        backend::ray::RayMap,
+        mesh_picking::ray_cast::{RayCastSettings, RayCastVisibility},
+    },
+    prelude::*,
+};
 
 /// A resource to track what kind of picking blockers are currently active
 #[derive(Resource)]
@@ -63,28 +68,21 @@ pub struct ChangePick {
 pub fn update_picking_cam(
     mut commands: Commands,
     camera_controls: Res<CameraControls>,
-    picking_cams: Query<Entity, With<RaycastSource<SiteRaycastSet>>>,
+    ray_map: Res<RayMap>,
+    mut ray_cast: MeshRayCast,
 ) {
     if camera_controls.is_changed() {
         let active_camera = camera_controls.active_camera();
-        if picking_cams
-            .get_single()
-            .ok()
-            .filter(|current| *current == active_camera)
-            .is_none()
-        {
-            for cam in picking_cams.iter() {
-                commands
-                    .entity(cam)
-                    .remove::<RaycastSource<SiteRaycastSet>>();
-            }
-
-            commands.entity(camera_controls.active_camera()).insert(
-                RaycastSource::<SiteRaycastSet>::new_cursor()
-                    .with_early_exit(false)
-                    .with_visibility(RaycastVisibility::MustBeVisible),
-            );
-        }
+        let Some((_, ray)) = ray_map
+            .iter()
+            .find(|(ray_id, _)| ray_id.camera == camera_controls.active_camera())
+        else {
+            return;
+        };
+        let ray_cast_settings = RayCastSettings::default()
+            .never_early_exit()
+            .with_visibility(RayCastVisibility::Visible);
+        ray_cast.cast_ray(ray, &ray_cast_settings);
     }
 }
 
@@ -111,8 +109,8 @@ fn pick_topmost(
 pub fn update_picked(
     selectable: Query<&Selectable>,
     blockers: Option<Res<PickingBlockers>>,
-    pick_source_query: Query<&RaycastSource<SiteRaycastSet>>,
     visual_cues: Query<&ComputedVisualCue>,
+    ray_cast: MeshRayCast,
     mut picked: ResMut<Picked>,
     mut change_pick: EventWriter<ChangePick>,
 ) {
@@ -132,11 +130,10 @@ pub fn update_picked(
     }
 
     let current_picked = 'current_picked: {
-        for pick_source in &pick_source_query {
-            let picks = pick_source.intersections();
+        for intersections in &ray_cast.output {
             // First only look at the visual cues that are being xrayed
             if let Some(topmost) = pick_topmost(
-                picks
+                intersections
                     .iter()
                     .filter(|(e, _)| {
                         visual_cues
@@ -152,7 +149,8 @@ pub fn update_picked(
             }
 
             // Now look at all possible pickables
-            if let Some(topmost) = pick_topmost(picks.iter().map(|(e, _)| *e), &selectable) {
+            if let Some(topmost) = pick_topmost(intersections.iter().map(|(e, _)| *e), &selectable)
+            {
                 break 'current_picked Some(topmost);
             }
         }

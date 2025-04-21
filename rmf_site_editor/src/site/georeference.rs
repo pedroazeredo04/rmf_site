@@ -1,6 +1,5 @@
 use bevy::{asset::AssetPath, math::Ray3d, prelude::*, window::PrimaryWindow};
 use bevy_egui::{egui, EguiContexts};
-use bevy_mod_raycast::primitives::rays;
 use camera_controls::{CameraControls, ProjectionMode};
 use rmf_site_format::{GeographicComponent, GeographicOffset};
 use std::collections::HashSet;
@@ -424,35 +423,31 @@ pub fn render_map_tiles(
                     let Ok(primary_window) = primary_window.get_single() else {
                         return;
                     };
-                    // TODO(@xiyuoh)
-                    let top_left_ray = rays::ray_from_screenspace(
+
+                    let top_left_ray = ray_from_screenspace(
                         Vec2::new(0.0, 0.0),
                         camera,
                         transform,
                         primary_window,
                     )
                     .into();
-                    let top_right_ray = rays::ray_from_screenspace(
+                    let top_right_ray = ray_from_screenspace(
                         Vec2::new(viewport_size.x, 0.0),
                         camera,
                         transform,
                         primary_window,
                     )
                     .into();
-                    let bottom_left_ray = rays::ray_from_screenspace(
+                    let bottom_left_ray = ray_from_screenspace(
                         Vec2::new(0.0, viewport_size.y),
                         camera,
                         transform,
                         primary_window,
                     )
                     .into();
-                    let bottom_right_ray = rays::ray_from_screenspace(
-                        viewport_size,
-                        camera,
-                        transform,
-                        primary_window,
-                    )
-                    .into();
+                    let bottom_right_ray =
+                        ray_from_screenspace(viewport_size, camera, transform, primary_window)
+                            .into();
 
                     let top_left = ray_groundplane_intersection(&top_left_ray);
                     let top_right = ray_groundplane_intersection(&top_right_ray);
@@ -530,15 +525,31 @@ pub fn render_map_tiles(
 
 fn ray_groundplane_intersection(ray: &Option<Ray3d>) -> Vec3 {
     if let Some(ray) = ray {
-        let t = -ray.origin().z / ray.direction().z;
+        let t = -ray.origin.z / ray.direction.z;
         Vec3::new(
-            ray.origin().x + t * ray.direction().x,
-            ray.origin().y + t * ray.direction().y,
+            ray.origin.x + t * ray.direction.x,
+            ray.origin.y + t * ray.direction.y,
             0.0,
         )
     } else {
         Vec3::new(0.0, 0.0, 0.0)
     }
+}
+
+// TODO(@xiyuoh) This is from the archived bevy_mod_raycast, find alternate API if any
+fn ray_from_screenspace(
+    cursor_pos_screen: Vec2,
+    camera: &Camera,
+    camera_transform: &GlobalTransform,
+    window: &Window,
+) -> Option<Ray3d> {
+    let mut viewport_pos = cursor_pos_screen;
+    if let Some(viewport) = &camera.viewport {
+        viewport_pos -= viewport.physical_position.as_vec2() / window.scale_factor();
+    }
+    camera
+        .viewport_to_world(camera_transform, viewport_pos)
+        .map(Ray3d::from)
 }
 
 #[test]

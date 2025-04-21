@@ -86,11 +86,7 @@ pub use visual_cue::*;
 
 use bevy::prelude::*;
 use bevy_mod_outline::OutlinePlugin;
-use bevy_mod_raycast::deferred::DeferredRaycastingPlugin;
 use bevy_polyline::PolylinePlugin;
-
-#[derive(Reflect)]
-pub struct SiteRaycastSet;
 
 #[derive(Default)]
 pub struct InteractionPlugin {
@@ -146,7 +142,7 @@ impl Plugin for InteractionPlugin {
                 apply_deferred.in_set(InteractionUpdateSet::CommandFlush),
             )
             .add_plugins(PolylinePlugin)
-            .add_plugins(DeferredRaycastingPlugin::<SiteRaycastSet>::default())
+            .add_plugins(MeshPickingPlugin)
             .init_resource::<InteractionAssets>()
             .init_resource::<Cursor>()
             .init_resource::<CameraControls>()

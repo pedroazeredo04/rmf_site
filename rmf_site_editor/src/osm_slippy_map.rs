@@ -312,7 +312,7 @@ impl OSMTile {
             }
         }
 
-        Ok(VecReader::new(bytes))
+        Ok(Box::new(VecReader::new(bytes)))
     }
 }
 

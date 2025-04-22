@@ -1,8 +1,10 @@
 use bevy::asset::io::AssetSource as BevyAssetSource;
 use bevy::{
-    asset::io::{AssetReader, AssetReaderError, AssetSourceBuilder, PathStream, Reader, VecReader},
+    asset::io::{
+        AssetReader, AssetReaderError, AssetSourceBuilder, ErasedAssetReader, PathStream, Reader,
+        VecReader,
+    },
     prelude::*,
-    utils::BoxedFuture,
 };
 use dirs;
 use serde::Deserialize;
@@ -161,15 +163,15 @@ fn save_to_cache(name: &str, bytes: &[u8]) {
 
 pub struct SiteAssetReader<F>
 where
-    F: Fn(&Path) -> BoxedFuture<'_, Result<dyn Reader + '_, AssetReaderError>> + Sync + 'static,
+    F: Fn(&Path) -> Result<dyn Reader + '_, AssetReaderError> + Sync + 'static,
 {
-    pub default_reader: Box<dyn AssetReader>,
+    pub default_reader: Box<dyn ErasedAssetReader>,
     pub reader: F,
 }
 
 impl<F> SiteAssetReader<F>
 where
-    F: Fn(&Path) -> BoxedFuture<'_, Result<dyn Reader + '_, AssetReaderError>> + Sync + 'static,
+    F: Fn(&Path) -> Result<dyn Reader + '_, AssetReaderError> + Sync + 'static,
 {
     pub fn new(reader: F) -> Self {
         Self {
@@ -183,37 +185,25 @@ where
 
 impl<F> AssetReader for SiteAssetReader<F>
 where
-    F: Fn(&Path) -> BoxedFuture<'_, Result<dyn Reader + '_, AssetReaderError>>
-        + Send
-        + Sync
-        + 'static,
+    F: Fn(&Path) -> Result<dyn Reader + '_, AssetReaderError> + Send + Sync + 'static,
 {
-    fn read<'a>(
-        &'a self,
-        path: &'a Path,
-    ) -> BoxedFuture<'a, Result<impl Reader + 'a, AssetReaderError>> {
-        (self.reader)(path)
+    async fn read<'a>(&'a self, path: &'a Path) -> Result<impl Reader + 'a, AssetReaderError> {
+        (self.reader)(path).await
     }
 
-    fn read_meta<'a>(
-        &'a self,
-        path: &'a Path,
-    ) -> BoxedFuture<'a, Result<impl Reader + 'a, AssetReaderError>> {
-        self.default_reader.read_meta(path)
+    async fn read_meta<'a>(&'a self, path: &'a Path) -> Result<impl Reader + 'a, AssetReaderError> {
+        self.default_reader.read_meta(path).await
     }
 
-    fn read_directory<'a>(
+    async fn read_directory<'a>(
         &'a self,
         path: &'a Path,
-    ) -> BoxedFuture<'a, Result<Box<PathStream>, AssetReaderError>> {
-        self.default_reader.read_directory(path)
+    ) -> Result<Box<PathStream>, AssetReaderError> {
+        self.default_reader.read_directory(path).await
     }
 
-    fn is_directory<'a>(
-        &'a self,
-        path: &'a Path,
-    ) -> BoxedFuture<'a, Result<bool, AssetReaderError>> {
-        self.default_reader.is_directory(path)
+    async fn is_directory<'a>(&'a self, path: &'a Path) -> Result<bool, AssetReaderError> {
+        self.default_reader.is_directory(path).await
     }
 }
 

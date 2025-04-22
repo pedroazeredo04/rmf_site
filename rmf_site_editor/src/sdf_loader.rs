@@ -18,7 +18,6 @@
 use bevy::asset::{io::Reader, AssetLoader, LoadContext};
 use bevy::prelude::*;
 
-use bevy::utils::BoxedFuture;
 use futures_lite::AsyncReadExt;
 
 use thiserror::Error;
@@ -59,18 +58,16 @@ impl AssetLoader for SdfLoader {
     type Asset = bevy::scene::Scene;
     type Settings = ();
     type Error = SdfError;
-    fn load<'a>(
-        &'a self,
-        reader: &'a mut dyn Reader,
-        _settings: &'a (),
-        load_context: &'a mut LoadContext,
-    ) -> BoxedFuture<'a, Result<Self::Asset, Self::Error>> {
-        Box::pin(async move {
-            let mut bytes = Vec::new();
-            // TODO(luca) remove unwrap
-            reader.read_to_end(&mut bytes).await.unwrap();
-            Ok(load_model(bytes, load_context)?)
-        })
+    async fn load(
+        &self,
+        reader: &mut dyn Reader,
+        _settings: &(),
+        load_context: &mut LoadContext,
+    ) -> Result<Self::Asset, Self::Error> {
+        let mut bytes = Vec::new();
+        // TODO(luca) remove unwrap
+        reader.read_to_end(&mut bytes).await.unwrap();
+        Ok(load_model(bytes, load_context)?)
     }
 
     fn extensions(&self) -> &[&str] {

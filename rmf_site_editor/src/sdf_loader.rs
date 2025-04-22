@@ -62,7 +62,7 @@ impl AssetLoader for SdfLoader {
         &self,
         reader: &mut dyn Reader,
         _settings: &(),
-        load_context: &mut LoadContext,
+        load_context: &mut LoadContext<'_>,
     ) -> Result<Self::Asset, Self::Error> {
         let mut bytes = Vec::new();
         // TODO(luca) remove unwrap
@@ -91,7 +91,7 @@ pub enum SdfError {
 /// Combines the path from the SDF that is currently being processed with the path of a mesh
 /// referenced in the SDF to generate an AssetSource that can be loaded by the AssetServer.
 fn compute_model_source<'a, 'b>(
-    load_context: &'a mut LoadContext<'b>,
+    load_context: &mut LoadContext<'b>,
     subasset_uri: &'a str,
 ) -> Result<AssetSource, SdfError> {
     // SDF can reference models with the model:// syntax, which specifies a path relative to a certain
@@ -186,7 +186,7 @@ fn spawn_geometry<'a, 'b>(
     geometry: &'a SdfGeometry,
     geometry_name: &'a str,
     pose: &'a Option<SdfPose>,
-    load_context: &'a mut LoadContext<'b>,
+    load_context: &mut LoadContext<'b>,
     is_static: bool,
 ) -> Result<Option<Entity>, SdfError> {
     let pose = parse_pose(pose);
@@ -255,7 +255,7 @@ fn spawn_geometry<'a, 'b>(
 
 fn load_model<'a, 'b>(
     bytes: Vec<u8>,
-    load_context: &'a mut LoadContext<'b>,
+    load_context: &mut LoadContext<'b>,
 ) -> Result<bevy::scene::Scene, SdfError> {
     let sdf_str = std::str::from_utf8(&bytes).unwrap();
     let root = sdformat_rs::from_str::<sdformat_rs::SdfRoot>(sdf_str);

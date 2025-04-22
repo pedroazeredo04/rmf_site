@@ -578,14 +578,14 @@ impl FromWorld for OSMMenu {
         let sub_menu = world
             .spawn(Menu::from_title("Geographic Offset".to_string()))
             .id();
-        world.entity_mut(sub_menu).push_children(&[
+        world.entity_mut(sub_menu).add_children(&[
             set_reference,
             view_reference,
             settings_reference,
         ]);
 
         let tool_header = world.resource::<ToolMenu>().get();
-        world.entity_mut(tool_header).push_children(&[sub_menu]);
+        world.entity_mut(tool_header).add_children(&[sub_menu]);
 
         // Checkbox
         let view_header = world.resource::<ViewMenu>().get();
@@ -594,7 +594,7 @@ impl FromWorld for OSMMenu {
             .id();
         world
             .entity_mut(view_header)
-            .push_children(&[satellite_map_check_button]);
+            .add_children(&[satellite_map_check_button]);
 
         OSMMenu {
             set_reference,

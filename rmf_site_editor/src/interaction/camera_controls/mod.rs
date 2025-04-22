@@ -294,8 +294,8 @@ impl FromWorld for CameraControls {
                 GENERAL_RENDER_LAYER,
                 VISUAL_CUE_RENDER_LAYER,
             ]))
-            .push_children(&[perspective_headlight])
-            .push_children(&perspective_child_cameras)
+            .add_children(&[perspective_headlight])
+            .add_children(&perspective_child_cameras)
             .id();
 
         let orthographic_headlight = world
@@ -358,8 +358,8 @@ impl FromWorld for CameraControls {
                 GENERAL_RENDER_LAYER,
                 VISUAL_CUE_RENDER_LAYER,
             ]))
-            .push_children(&[orthographic_headlight])
-            .push_children(&orthographic_child_cameras)
+            .add_children(&[orthographic_headlight])
+            .add_children(&orthographic_child_cameras)
             .id();
 
         CameraControls {

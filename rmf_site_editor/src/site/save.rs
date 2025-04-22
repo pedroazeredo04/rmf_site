@@ -80,7 +80,7 @@ fn assemble_edited_drawing(world: &mut World) {
     let Some(mut level) = world.get_entity_mut(c.level) else {
         return;
     };
-    level.push_children(&[c.drawing]);
+    level.add_children(&[c.drawing]);
 }
 
 /// Revert the drawing back to the root so it can continue to be edited.

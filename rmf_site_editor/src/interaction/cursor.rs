@@ -231,7 +231,7 @@ impl FromWorld for Cursor {
 
         let cursor = world
             .spawn(VisualCue::no_outline())
-            .push_children(&[
+            .add_children(&[
                 halo,
                 dagger,
                 level_anchor_placement,

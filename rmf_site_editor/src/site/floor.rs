@@ -219,7 +219,7 @@ fn floor_transparency(
     } else {
         AlphaMode::Opaque
     };
-    (*Color::default().set_a(alpha), alpha_mode)
+    (Color::default().set_alpha(alpha), alpha_mode)
 }
 
 pub fn add_floor_visuals(

@@ -27,7 +27,7 @@ use crate::{
     site::{Change, Group, ModelMarker, ModelProperty, Pose, Robot},
     widgets::{prelude::*, Inspect},
 };
-use bevy::{ecs::system::SystemParam, prelude::*};
+use bevy::{color::palettes::css, ecs::system::SystemParam, prelude::*};
 use bevy_egui::egui::{DragValue, Grid, Ui};
 use rmf_site_format::Recall;
 use serde::{Deserialize, Serialize};
@@ -220,7 +220,7 @@ pub struct InspectCircleCollision<'w, 's> {
         (With<ModelMarker>, With<Group>),
     >,
     poses: Query<'w, 's, &'static Pose>,
-    gizmos: Gizmos<'s>,
+    gizmos: Gizmos<'w, 's>,
     change_robot_property: EventWriter<'w, Change<ModelProperty<Robot>>>,
 }
 
@@ -265,7 +265,7 @@ impl<'w, 's> WidgetSystem<Inspect> for InspectCircleCollision<'w, 's> {
                                 Vec3::new(pose.trans[0], pose.trans[1], pose.trans[2] + 0.01),
                                 Vec3::Z,
                                 new_circle_collision.radius,
-                                Color::RED,
+                                css::RED,
                             );
                         }
                     };

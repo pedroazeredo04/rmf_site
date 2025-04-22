@@ -45,9 +45,9 @@ impl OutlineVisualization {
                 if !hovered.cue() && !selected.cue() {
                     None
                 } else if hovered.cue() && selected.cue() {
-                    Some(Color::rgb(1.0, 0.0, 0.3))
+                    Some(Color::srgb(1.0, 0.0, 0.3))
                 } else if selected.cue() {
-                    Some(Color::rgb(1.0, 0.3, 1.0))
+                    Some(Color::srgb(1.0, 0.3, 1.0))
                 } else
                 /* only hovered */
                 {

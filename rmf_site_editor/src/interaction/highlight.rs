@@ -31,9 +31,9 @@ pub struct SuppressHighlight;
 impl Highlight {
     pub fn for_drawing() -> Self {
         Self {
-            select: Color::rgb(1., 0.7, 1.),
-            hover: Color::rgb(0.7, 1., 1.),
-            hover_select: Color::rgb(1.0, 0.5, 0.7),
+            select: Color::srgb(1., 0.7, 1.),
+            hover: Color::srgb(0.7, 1., 1.),
+            hover_select: Color::srgb(1.0, 0.5, 0.7),
         }
     }
 }
@@ -78,7 +78,7 @@ pub fn update_highlight_visualization(
             } else {
                 Color::WHITE
             };
-            color.set_a(material.base_color.a());
+            color.set_alpha(material.base_color.a());
 
             material.base_color = color;
         }

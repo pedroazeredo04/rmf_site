@@ -53,33 +53,33 @@ impl Default for GizmoBlockers {
 impl GizmoMaterialSet {
     pub fn make_x_axis(materials: &mut Mut<Assets<StandardMaterial>>) -> Self {
         Self {
-            passive: materials.add(Color::rgb(1., 0., 0.).into()),
-            hover: materials.add(Color::rgb(1.0, 0.3, 0.3).into()),
-            drag: materials.add(Color::rgb(0.7, 0., 0.).into()),
+            passive: materials.add(Color::srgb(1., 0., 0.).into()),
+            hover: materials.add(Color::srgb(1.0, 0.3, 0.3).into()),
+            drag: materials.add(Color::srgb(0.7, 0., 0.).into()),
         }
     }
 
     pub fn make_y_axis(materials: &mut Mut<Assets<StandardMaterial>>) -> Self {
         Self {
-            passive: materials.add(Color::rgb(0., 0.9, 0.).into()),
-            hover: materials.add(Color::rgb(0.5, 1.0, 0.5).into()),
-            drag: materials.add(Color::rgb(0., 0.6, 0.).into()),
+            passive: materials.add(Color::srgb(0., 0.9, 0.).into()),
+            hover: materials.add(Color::srgb(0.5, 1.0, 0.5).into()),
+            drag: materials.add(Color::srgb(0., 0.6, 0.).into()),
         }
     }
 
     pub fn make_z_axis(materials: &mut Mut<Assets<StandardMaterial>>) -> Self {
         Self {
-            passive: materials.add(Color::rgb(0., 0., 0.9).into()),
-            hover: materials.add(Color::rgb(0.5, 0.5, 1.0).into()),
-            drag: materials.add(Color::rgb(0., 0., 0.6).into()),
+            passive: materials.add(Color::srgb(0., 0., 0.9).into()),
+            hover: materials.add(Color::srgb(0.5, 0.5, 1.0).into()),
+            drag: materials.add(Color::srgb(0., 0., 0.6).into()),
         }
     }
 
     pub fn make_z_plane(materials: &mut Mut<Assets<StandardMaterial>>) -> Self {
         Self {
-            passive: materials.add(Color::rgba(0., 0., 1., 0.6).into()),
-            hover: materials.add(Color::rgba(0.3, 0.3, 1., 0.6).into()),
-            drag: materials.add(Color::rgba(0., 0., 0.7, 0.9).into()),
+            passive: materials.add(Color::srgba(0., 0., 1., 0.6).into()),
+            hover: materials.add(Color::srgba(0.3, 0.3, 1., 0.6).into()),
+            drag: materials.add(Color::srgba(0., 0., 0.7, 0.9).into()),
         }
     }
 }

@@ -15,7 +15,6 @@
  *
 */
 
-use crate::shapes::Circle;
 use crate::{shapes::*, site::*};
 use bevy::{
     asset::embedded_asset,
@@ -114,19 +113,20 @@ impl FromWorld for SiteAssets {
             .get_resource_mut::<Assets<StandardMaterial>>()
             .unwrap();
         let unassigned_lane_material =
-            materials.add(old_default_material(Color::rgb(0.1, 0.1, 0.1)));
-        let select_color = Color::rgb(1., 0.3, 1.);
-        let hover_color = Color::rgb(0.3, 1., 1.);
-        let hover_select_color = Color::rgb(1.0, 0.0, 0.3);
+            materials.add(old_default_material(Color::srgb(0.1, 0.1, 0.1)));
+        let select_color = Color::srgb(1., 0.3, 1.);
+        let hover_color = Color::srgb(0.3, 1., 1.);
+        let hover_select_color = Color::srgb(1.0, 0.0, 0.3);
         let select_material = materials.add(old_default_material(select_color));
         let hover_material = materials.add(old_default_material(hover_color));
         let hover_select_material = materials.add(old_default_material(hover_select_color));
-        // let hover_select_material = materials.add(Color::rgb_u8(177, 178, 255).into());
-        // let hover_select_material = materials.add(Color::rgb_u8(214, 28, 78).into());
-        let measurement_material = materials.add(old_default_material(Color::rgb_u8(250, 234, 72)));
-        let fiducial_material = materials.add(old_default_material(Color::rgb(0.1, 0.1, 0.8)));
+        // let hover_select_material = materials.add(Color::srgb_u8(177, 178, 255).into());
+        // let hover_select_material = materials.add(Color::srgb_u8(214, 28, 78).into());
+        let measurement_material =
+            materials.add(old_default_material(Color::srgb_u8(250, 234, 72)));
+        let fiducial_material = materials.add(old_default_material(Color::srgb(0.1, 0.1, 0.8)));
         let passive_anchor_material = materials.add(StandardMaterial {
-            base_color: Color::rgb(0.4, 0.7, 0.6),
+            base_color: Color::srgb(0.4, 0.7, 0.6),
             // unlit: true,
             unlit: false,
             perceptual_roughness: 0.089,
@@ -136,7 +136,7 @@ impl FromWorld for SiteAssets {
         let unassigned_anchor_material = materials.add(StandardMaterial {
             // unlit: true,
             unlit: false,
-            ..old_default_material(Color::rgb(1.0, 0.9, 0.05))
+            ..old_default_material(Color::srgb(1.0, 0.9, 0.05))
         });
         let hover_anchor_material = materials.add(StandardMaterial {
             // unlit: true,
@@ -158,29 +158,29 @@ impl FromWorld for SiteAssets {
             depth_bias: 1.0,
             // unlit: true,
             unlit: false,
-            ..old_default_material(Color::rgba(0.98, 0.91, 0.28, 0.5))
+            ..old_default_material(Color::srgba(0.98, 0.91, 0.28, 0.5))
         });
         let lift_wall_material =
-            materials.add(old_default_material(Color::rgba(0.7, 0.7, 0.7, 1.0)));
-        let lift_floor_material = materials.add(old_default_material(Color::rgb(0.3, 0.3, 0.3)));
+            materials.add(old_default_material(Color::srgba(0.7, 0.7, 0.7, 1.0)));
+        let lift_floor_material = materials.add(old_default_material(Color::srgb(0.3, 0.3, 0.3)));
         let door_body_material = materials.add(StandardMaterial {
             alpha_mode: AlphaMode::Blend,
-            ..old_default_material(Color::rgba(1., 1., 1., 0.8))
+            ..old_default_material(Color::srgba(1., 1., 1., 0.8))
         });
         let translucent_black = materials.add(StandardMaterial {
             alpha_mode: AlphaMode::Blend,
-            ..old_default_material(Color::rgba(0., 0., 0., 0.8))
+            ..old_default_material(Color::srgba(0., 0., 0., 0.8))
         });
         let translucent_white = materials.add(StandardMaterial {
             alpha_mode: AlphaMode::Blend,
-            ..old_default_material(Color::rgba(1., 1., 1., 0.8))
+            ..old_default_material(Color::srgba(1., 1., 1., 0.8))
         });
         let physical_camera_material =
-            materials.add(old_default_material(Color::rgb(0.6, 0.7, 0.8)));
+            materials.add(old_default_material(Color::srgb(0.6, 0.7, 0.8)));
         let occupied_material =
-            materials.add(old_default_material(Color::rgba(0.8, 0.1, 0.1, 0.2)));
+            materials.add(old_default_material(Color::srgba(0.8, 0.1, 0.1, 0.2)));
         let default_mesh_grey_material =
-            materials.add(old_default_material(Color::rgb(0.7, 0.7, 0.7)));
+            materials.add(old_default_material(Color::srgb(0.7, 0.7, 0.7)));
 
         let charger_material = materials.add(old_default_material_t(charger_texture));
         let holding_point_material = materials.add(old_default_material_t(holding_point_texture));
@@ -203,7 +203,7 @@ impl FromWorld for SiteAssets {
         let lane_mid_outline = meshes.add(make_flat_rect_mesh(1.0, 1.125).into());
         let lane_end_mesh = meshes.add(
             make_flat_disk(
-                Circle {
+                OffsetCircle {
                     radius: LANE_WIDTH / 2.0,
                     height: 0.0,
                 },
@@ -213,7 +213,7 @@ impl FromWorld for SiteAssets {
         );
         let lane_end_outline = meshes.add(
             make_flat_disk(
-                Circle {
+                OffsetCircle {
                     radius: 1.125 * LANE_WIDTH / 2.0,
                     height: 0.0,
                 },

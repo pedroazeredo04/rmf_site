@@ -267,26 +267,26 @@ impl From<MeshBuffer> for Mesh {
 }
 
 #[derive(Clone, Copy, Debug)]
-pub struct Circle {
+pub struct OffsetCircle {
     pub radius: f32,
     pub height: f32,
 }
 
-impl Circle {
+impl OffsetCircle {
     fn flip_height(mut self) -> Self {
         self.height = -self.height;
         self
     }
 }
 
-impl From<(f32, f32)> for Circle {
+impl From<(f32, f32)> for OffsetCircle {
     fn from((radius, height): (f32, f32)) -> Self {
         Self { radius, height }
     }
 }
 
 pub(crate) fn make_circles(
-    circles: impl IntoIterator<Item = Circle>,
+    circles: impl IntoIterator<Item = OffsetCircle>,
     resolution: u32,
     gap: f32,
 ) -> impl Iterator<Item = [f32; 3]> {
@@ -304,7 +304,7 @@ pub(crate) fn make_circles(
         });
 }
 
-pub(crate) fn make_boxy_wrap(circles: [Circle; 2], segments: u32) -> MeshBuffer {
+pub(crate) fn make_boxy_wrap(circles: [OffsetCircle; 2], segments: u32) -> MeshBuffer {
     let (bottom_circle, top_circle) = if circles[0].height < circles[1].height {
         (circles[0], circles[1])
     } else {
@@ -352,7 +352,7 @@ pub(crate) fn make_boxy_wrap(circles: [Circle; 2], segments: u32) -> MeshBuffer 
     return MeshBuffer::new(positions, normals, indices);
 }
 
-pub(crate) fn make_smooth_wrap(circles: [Circle; 2], resolution: u32) -> MeshBuffer {
+pub(crate) fn make_smooth_wrap(circles: [OffsetCircle; 2], resolution: u32) -> MeshBuffer {
     let (bottom_circle, top_circle) = if circles[0].height < circles[1].height {
         (circles[0], circles[1])
     } else {
@@ -388,7 +388,7 @@ pub(crate) fn make_smooth_wrap(circles: [Circle; 2], resolution: u32) -> MeshBuf
     return MeshBuffer::new(positions, normals, indices);
 }
 
-pub(crate) fn make_pyramid(circle: Circle, peak: [f32; 3], segments: u32) -> MeshBuffer {
+pub(crate) fn make_pyramid(circle: OffsetCircle, peak: [f32; 3], segments: u32) -> MeshBuffer {
     let positions: Vec<[f32; 3]> = make_circles([circle, circle], segments + 1, 0.)
         .chain([peak].into_iter().cycle().take(segments as usize))
         .collect();
@@ -427,7 +427,7 @@ pub(crate) fn make_pyramid(circle: Circle, peak: [f32; 3], segments: u32) -> Mes
     return MeshBuffer::new(positions, normals, indices);
 }
 
-pub(crate) fn make_cone(circle: Circle, peak: [f32; 3], resolution: u32) -> MeshBuffer {
+pub(crate) fn make_cone(circle: OffsetCircle, peak: [f32; 3], resolution: u32) -> MeshBuffer {
     let positions: Vec<[f32; 3]> = make_circles([circle], resolution + 1, 0.)
         .take(resolution as usize) // skip the last vertex which would close the circle
         .chain([peak].into_iter().cycle().take(resolution as usize))
@@ -576,7 +576,7 @@ pub(crate) fn make_wall_mesh(
         )
 }
 
-pub(crate) fn make_top_circle(circle: Circle, resolution: u32) -> MeshBuffer {
+pub(crate) fn make_top_circle(circle: OffsetCircle, resolution: u32) -> MeshBuffer {
     let positions: Vec<[f32; 3]> = make_circles([circle], resolution, 0.)
         .take(resolution as usize) // skip the vertex which would close the circle
         .chain([[0., 0., circle.height]].into_iter())
@@ -598,7 +598,7 @@ pub(crate) fn make_top_circle(circle: Circle, resolution: u32) -> MeshBuffer {
     return MeshBuffer::new(positions, normals, indices);
 }
 
-pub(crate) fn make_bottom_circle(circle: Circle, resolution: u32) -> MeshBuffer {
+pub(crate) fn make_bottom_circle(circle: OffsetCircle, resolution: u32) -> MeshBuffer {
     let positions: Vec<[f32; 3]> = make_circles([circle], resolution, 0.)
         .take(resolution as usize) // skip the vertex which would close the circle
         .chain([[0., 0., circle.height]].into_iter())
@@ -620,16 +620,16 @@ pub(crate) fn make_bottom_circle(circle: Circle, resolution: u32) -> MeshBuffer 
     return MeshBuffer::new(positions, normals, indices);
 }
 
-pub(crate) fn make_flat_disk(circle: Circle, resolution: u32) -> MeshBuffer {
+pub(crate) fn make_flat_disk(circle: OffsetCircle, resolution: u32) -> MeshBuffer {
     make_top_circle(circle, resolution).merge_with(make_bottom_circle(circle, resolution))
 }
 
 pub(crate) fn make_dagger_mesh() -> Mesh {
-    let lower_ring = Circle {
+    let lower_ring = OffsetCircle {
         radius: 0.01,
         height: 0.1,
     };
-    let upper_ring = Circle {
+    let upper_ring = OffsetCircle {
         radius: 0.02,
         height: 0.4,
     };
@@ -651,15 +651,15 @@ pub(crate) fn make_dagger_mesh() -> Mesh {
 }
 
 pub(crate) fn make_cylinder(height: f32, radius: f32) -> MeshBuffer {
-    let top_circle = Circle {
+    let top_circle = OffsetCircle {
         height: height / 2.0,
         radius,
     };
-    let mid_circle = Circle {
+    let mid_circle = OffsetCircle {
         height: 0.0,
         radius,
     };
-    let bottom_circle = Circle {
+    let bottom_circle = OffsetCircle {
         height: -height / 2.0,
         radius,
     };
@@ -680,15 +680,15 @@ pub(crate) fn make_cylinder_arrow_mesh() -> Mesh {
     let l_head = 0.2;
     let r_head = 0.15;
     let r_base = 0.1;
-    let head_base = Circle {
+    let head_base = OffsetCircle {
         radius: r_head,
         height: 1.0 - l_head,
     };
-    let cylinder_top = Circle {
+    let cylinder_top = OffsetCircle {
         radius: r_base,
         height: 1.0 - l_head,
     };
-    let cylinder_bottom = Circle {
+    let cylinder_bottom = OffsetCircle {
         radius: r_base,
         height: 0.0,
     };
@@ -877,7 +877,7 @@ pub(crate) fn make_physical_camera_mesh() -> Mesh {
 
     // Outside of the lens hood
     make_pyramid(
-        Circle {
+        OffsetCircle {
             radius: scale,
             height: 0.,
         },
@@ -893,7 +893,7 @@ pub(crate) fn make_physical_camera_mesh() -> Mesh {
 
     // Inside of the lens hood
     make_pyramid(
-        Circle {
+        OffsetCircle {
             radius: scale,
             height: scale,
         },
@@ -912,7 +912,7 @@ pub(crate) fn make_physical_camera_mesh() -> Mesh {
 
 pub(crate) fn make_diamond(tip: f32, width: f32) -> MeshBuffer {
     make_pyramid(
-        Circle {
+        OffsetCircle {
             radius: width,
             height: 0.0,
         },
@@ -921,7 +921,7 @@ pub(crate) fn make_diamond(tip: f32, width: f32) -> MeshBuffer {
     )
     .merge_with(
         make_pyramid(
-            Circle {
+            OffsetCircle {
                 radius: width,
                 height: 0.0,
             },
@@ -1249,10 +1249,10 @@ pub(crate) fn make_closed_path_outline(mut initial_positions: Vec<[f32; 3]>) -> 
         .copy_outline_normals()
 }
 
-const X_AXIS_COLOR: Color = Color::rgb(1.0, 0.2, 0.2);
-const Y_AXIS_COLOR: Color = Color::rgb(0.2, 1.0, 0.2);
-const NEG_X_AXIS_COLOR: Color = Color::rgb(0.5, 0.0, 0.0);
-const NEG_Y_AXIS_COLOR: Color = Color::rgb(0.0, 0.5, 0.0);
+const X_AXIS_COLOR: Color = Color::srgb(1.0, 0.2, 0.2);
+const Y_AXIS_COLOR: Color = Color::srgb(0.2, 1.0, 0.2);
+const NEG_X_AXIS_COLOR: Color = Color::srgb(0.5, 0.0, 0.0);
+const NEG_Y_AXIS_COLOR: Color = Color::srgb(0.0, 0.5, 0.0);
 
 const POLYLINE_SEPARATOR: Vec3 = Vec3::splat(std::f32::NAN);
 

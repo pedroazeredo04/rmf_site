@@ -65,7 +65,7 @@ impl Plugin for InspectRobotPropertiesPlugin {
     fn build(&self, app: &mut App) {
         // Allows us to toggle Robot as a configurable property
         // from the model description inspector
-        app.world_mut().init_component::<ModelProperty<Robot>>();
+        app.world_mut().register_component::<ModelProperty<Robot>>();
         let component_id = app
             .world()
             .components()

@@ -106,7 +106,7 @@ pub struct ModelPropertyData {
 impl FromWorld for ModelPropertyData {
     fn from_world(world: &mut World) -> Self {
         let mut required = HashMap::new();
-        world.init_component::<ModelProperty<AssetSource>>();
+        world.register_component::<ModelProperty<AssetSource>>();
         required.insert(
             world
                 .components()
@@ -118,7 +118,7 @@ impl FromWorld for ModelPropertyData {
                 get_remove_model_property_fn::<ModelProperty<AssetSource>>(),
             ),
         );
-        world.init_component::<ModelProperty<Scale>>();
+        world.register_component::<ModelProperty<Scale>>();
         required.insert(
             world
                 .components()
@@ -130,7 +130,7 @@ impl FromWorld for ModelPropertyData {
                 get_remove_model_property_fn::<ModelProperty<Scale>>(),
             ),
         );
-        world.init_component::<ModelProperty<IsStatic>>();
+        world.register_component::<ModelProperty<IsStatic>>();
         required.insert(
             world
                 .components()

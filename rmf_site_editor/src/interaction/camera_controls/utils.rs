@@ -97,8 +97,8 @@ pub fn get_camera_selected_point(
     } else {
         return Some(get_groundplane_else_default_selection(
             camera_ray.origin,
-            camera_ray.direction,
-            camera_ray.direction,
+            camera_ray.direction.as_vec3(),
+            camera_ray.direction.as_vec3(),
         ));
     }
 }

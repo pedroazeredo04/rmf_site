@@ -376,8 +376,8 @@ fn get_cursor_selected_point(
         Some((_, intersection)) => intersection.point.clone(),
         None => get_groundplane_else_default_selection(
             cursor_ray.origin.clone(),
-            cursor_ray.direction.clone(),
-            camera_transform.forward(),
+            cursor_ray.direction.clone().as_vec3(),
+            camera_transform.forward().as_vec3(),
         ),
     }
 }

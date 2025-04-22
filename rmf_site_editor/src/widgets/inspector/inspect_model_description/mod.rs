@@ -405,7 +405,7 @@ impl<'w, 's> InspectSelectedModelDescription<'w, 's> {
         let mut new_description_entity = current_description_entity.clone();
         ui.horizontal(|ui| {
             ui.label("Description");
-            ComboBox::from_id_source("model_description_affiliation")
+            ComboBox::from_id_salt("model_description_affiliation")
                 .selected_text(current_description_name.0.as_str())
                 .show_ui(ui, |ui| {
                     for (entity, name, ..) in self.model_descriptions.iter() {

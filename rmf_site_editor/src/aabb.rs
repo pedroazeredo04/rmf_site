@@ -11,7 +11,7 @@
 
 use bevy::{
     prelude::*,
-    render::{primitives::Aabb, view::VisibilitySystems},
+    render::{mesh::MeshAabb, primitives::Aabb, view::VisibilitySystems},
     utils::HashMap,
 };
 use smallvec::SmallVec;

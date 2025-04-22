@@ -255,15 +255,17 @@ impl<'w, 's> WidgetSystem<Inspect> for InspectCircleCollision<'w, 's> {
                     if ui
                         .add(
                             DragValue::new(&mut new_circle_collision.radius)
-                                .clamp_range(0_f32..=std::f32::INFINITY)
+                                .range(0_f32..=std::f32::INFINITY)
                                 .speed(0.01),
                         )
                         .is_pointer_button_down_on()
                     {
                         if let Ok(pose) = params.poses.get(selection) {
                             params.gizmos.circle(
-                                Vec3::new(pose.trans[0], pose.trans[1], pose.trans[2] + 0.01),
-                                Vec3::Z,
+                                Isometry3d::new(
+                                    Vec3::new(pose.trans[0], pose.trans[1], pose.trans[2] + 0.01),
+                                    Quat::IDENTITY, // TODO(@xiyuoh) ensure it is facing Vec3::Z
+                                ),
                                 new_circle_collision.radius,
                                 css::RED,
                             );
@@ -280,12 +282,12 @@ impl<'w, 's> WidgetSystem<Inspect> for InspectCircleCollision<'w, 's> {
                     ui.label("");
                     ui.add(
                         DragValue::new(&mut new_circle_collision.offset[0])
-                            .clamp_range(std::f32::NEG_INFINITY..=std::f32::INFINITY)
+                            .range(std::f32::NEG_INFINITY..=std::f32::INFINITY)
                             .speed(0.01),
                     );
                     ui.add(
                         DragValue::new(&mut new_circle_collision.offset[1])
-                            .clamp_range(std::f32::NEG_INFINITY..=std::f32::INFINITY)
+                            .range(std::f32::NEG_INFINITY..=std::f32::INFINITY)
                             .speed(0.01),
                     );
                     ui.end_row();

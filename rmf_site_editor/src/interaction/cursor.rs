@@ -280,8 +280,8 @@ impl<'w, 's> IntersectGroundPlaneParams<'w, 's> {
         let tf = self.global_transforms.get(frame).ok()?;
         let affine = tf.affine();
         let point = affine.translation.into();
-        let normal = affine.matrix3.col(2).into();
-        self.plane_intersection(point, InfinitePlane3d::new(Dir3::new(normal)))
+        let normal: Vec3 = affine.matrix3.col(2).into();
+        self.plane_intersection(point, InfinitePlane3d::new(normal))
     }
 
     pub fn plane_intersection(&self, origin: Vec3, plane: InfinitePlane3d) -> Option<Transform> {

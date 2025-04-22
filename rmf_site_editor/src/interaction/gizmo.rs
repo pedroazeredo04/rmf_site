@@ -53,33 +53,33 @@ impl Default for GizmoBlockers {
 impl GizmoMaterialSet {
     pub fn make_x_axis(materials: &mut Mut<Assets<StandardMaterial>>) -> Self {
         Self {
-            passive: materials.add(Color::srgb(1., 0., 0.).into()),
-            hover: materials.add(Color::srgb(1.0, 0.3, 0.3).into()),
-            drag: materials.add(Color::srgb(0.7, 0., 0.).into()),
+            passive: materials.add(Color::srgb(1., 0., 0.)),
+            hover: materials.add(Color::srgb(1.0, 0.3, 0.3)),
+            drag: materials.add(Color::srgb(0.7, 0., 0.)),
         }
     }
 
     pub fn make_y_axis(materials: &mut Mut<Assets<StandardMaterial>>) -> Self {
         Self {
-            passive: materials.add(Color::srgb(0., 0.9, 0.).into()),
-            hover: materials.add(Color::srgb(0.5, 1.0, 0.5).into()),
-            drag: materials.add(Color::srgb(0., 0.6, 0.).into()),
+            passive: materials.add(Color::srgb(0., 0.9, 0.)),
+            hover: materials.add(Color::srgb(0.5, 1.0, 0.5)),
+            drag: materials.add(Color::srgb(0., 0.6, 0.)),
         }
     }
 
     pub fn make_z_axis(materials: &mut Mut<Assets<StandardMaterial>>) -> Self {
         Self {
-            passive: materials.add(Color::srgb(0., 0., 0.9).into()),
-            hover: materials.add(Color::srgb(0.5, 0.5, 1.0).into()),
-            drag: materials.add(Color::srgb(0., 0., 0.6).into()),
+            passive: materials.add(Color::srgb(0., 0., 0.9)),
+            hover: materials.add(Color::srgb(0.5, 0.5, 1.0)),
+            drag: materials.add(Color::srgb(0., 0., 0.6)),
         }
     }
 
     pub fn make_z_plane(materials: &mut Mut<Assets<StandardMaterial>>) -> Self {
         Self {
-            passive: materials.add(Color::srgba(0., 0., 1., 0.6).into()),
-            hover: materials.add(Color::srgba(0.3, 0.3, 1., 0.6).into()),
-            drag: materials.add(Color::srgba(0., 0., 0.7, 0.9).into()),
+            passive: materials.add(Color::srgba(0., 0., 1., 0.6)),
+            hover: materials.add(Color::srgba(0.3, 0.3, 1., 0.6)),
+            drag: materials.add(Color::srgba(0., 0., 0.7, 0.9)),
         }
     }
 }
@@ -315,7 +315,7 @@ pub fn update_gizmo_click_start(
                 if let Ok((gizmo, _, mut material)) = gizmos.get_mut(new_pick) {
                     cursor.add_blocker(new_pick, &mut visibility);
                     if let Some(gizmo_materials) = &gizmo.materials {
-                        *material = gizmo_materials.hover.clone();
+                        *material = MeshMaterial3d(gizmo_materials.hover.clone());
                     }
 
                     *gizmo_state = GizmoState::Hovering(new_pick);
@@ -344,7 +344,7 @@ pub fn update_gizmo_click_start(
                             tf_for_entity_parent_inv,
                         });
                         if let Some(drag_materials) = &gizmo.materials {
-                            *material = drag_materials.drag.clone();
+                            *material = MeshMaterial3d(drag_materials.drag.clone());
                         }
                         *gizmo_state = GizmoState::Dragging(e);
                     } else {
@@ -470,7 +470,7 @@ pub fn update_drag_motions(
                 };
 
                 let n_r = ray.direction;
-                let denom = n_p.dot(n_r);
+                let denom = n_p.dot(n_r.as_vec3());
                 if denom.abs() < 1e-3 {
                     // The rays are nearly parallel so we should not attempt
                     // moving because the motion will be too extreme

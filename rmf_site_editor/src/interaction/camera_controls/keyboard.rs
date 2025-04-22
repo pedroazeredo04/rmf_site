@@ -91,16 +91,16 @@ pub fn update_keyboard_command(
         let is_shifting = keyboard_input.pressed(KeyCode::ShiftLeft)
             || keyboard_input.pressed(KeyCode::ShiftRight);
         let mut target_keyboard_motion = Vec2::ZERO;
-        if keyboard_input.pressed(KeyCode::Up) {
+        if keyboard_input.pressed(KeyCode::ArrowUp) {
             target_keyboard_motion.y += 1.0;
         }
-        if keyboard_input.pressed(KeyCode::Left) {
+        if keyboard_input.pressed(KeyCode::ArrowLeft) {
             target_keyboard_motion.x += -1.0;
         }
-        if keyboard_input.pressed(KeyCode::Down) {
+        if keyboard_input.pressed(KeyCode::ArrowDown) {
             target_keyboard_motion.y += -1.0;
         }
-        if keyboard_input.pressed(KeyCode::Right) {
+        if keyboard_input.pressed(KeyCode::ArrowRight) {
             target_keyboard_motion.x += 1.0;
         }
         if target_keyboard_motion.length() > 0.0 {

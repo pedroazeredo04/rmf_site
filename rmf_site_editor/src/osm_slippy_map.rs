@@ -149,7 +149,7 @@ impl OSMTile {
             PrimitiveTopology::TriangleList,
             RenderAssetUsages::default(),
         );
-        mesh.set_indices(Some(indices));
+        mesh.insert_indices(indices);
         mesh.insert_attribute(Mesh::ATTRIBUTE_POSITION, positions);
         mesh.insert_attribute(Mesh::ATTRIBUTE_NORMAL, normals);
         mesh.insert_attribute(Mesh::ATTRIBUTE_UV_0, uvs);

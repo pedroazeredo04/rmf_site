@@ -273,7 +273,7 @@ fn make_door_cues(door_width: f32, kind: &DoorType) -> (Mesh, Mesh) {
             );
             mesh.insert_attribute(Mesh::ATTRIBUTE_POSITION, Vec::<[f32; 3]>::new());
             mesh.insert_attribute(Mesh::ATTRIBUTE_NORMAL, Vec::<[f32; 3]>::new());
-            mesh.set_indices(Some(Indices::U32(vec![])));
+            mesh.insert_indices(Indices::U32(vec![])); // TODO(@xiyuoh) consider using with_removed_indices
             (mesh.clone(), mesh)
         }
     }

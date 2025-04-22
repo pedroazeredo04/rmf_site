@@ -138,24 +138,24 @@ impl MeshBuffer {
                     if let Some(Indices::U32(indices)) = mesh.indices_mut() {
                         indices.extend(self.indices.into_iter().map(|i| i + offset as u32));
                     } else {
-                        mesh.set_indices(Some(Indices::U32(
+                        mesh.insert_indices(Indices::U32(
                             self.indices
                                 .into_iter()
                                 .map(|i| i + offset as u32)
                                 .collect(),
-                        )));
+                        ));
                     }
                 }
                 PrimitiveTopology::LineList => {
                     if let Some(Indices::U32(indices)) = mesh.indices_mut() {
                         indices.extend(self.outline.into_iter().map(|i| i + offset as u32));
                     } else {
-                        mesh.set_indices(Some(Indices::U32(
+                        mesh.insert_indices(Indices::U32(
                             self.outline
                                 .into_iter()
                                 .map(|i| i + offset as u32)
                                 .collect(),
-                        )));
+                        ));
                     }
                 }
                 other => {
@@ -221,10 +221,10 @@ impl MeshBuffer {
 
             match mesh.primitive_topology() {
                 PrimitiveTopology::TriangleList => {
-                    mesh.set_indices(Some(Indices::U32(self.indices)));
+                    mesh.insert_indices(Indices::U32(self.indices));
                 }
                 PrimitiveTopology::LineList => {
-                    mesh.set_indices(Some(Indices::U32(self.outline)));
+                    mesh.insert_indices(Indices::U32(self.outline));
                 }
                 other => {
                     panic!(
@@ -238,7 +238,7 @@ impl MeshBuffer {
 
     pub(crate) fn into_outline(self) -> Mesh {
         let mut mesh = Mesh::new(PrimitiveTopology::LineList, RenderAssetUsages::default());
-        mesh.set_indices(Some(Indices::U32(self.outline)));
+        mesh.insert_indices(Indices::U32(self.outline));
         mesh.insert_attribute(Mesh::ATTRIBUTE_POSITION, self.positions);
         mesh.insert_attribute(Mesh::ATTRIBUTE_NORMAL, self.normals);
         mesh
@@ -256,7 +256,7 @@ impl From<MeshBuffer> for Mesh {
             PrimitiveTopology::TriangleList,
             RenderAssetUsages::default(),
         );
-        mesh.set_indices(Some(Indices::U32(buffer.indices)));
+        mesh.insert_indices(Indices::U32(buffer.indices));
         mesh.insert_attribute(Mesh::ATTRIBUTE_POSITION, buffer.positions);
         mesh.insert_attribute(Mesh::ATTRIBUTE_NORMAL, buffer.normals);
         if let Some(uv) = buffer.uv {
@@ -1043,7 +1043,7 @@ pub(crate) fn make_halo_mesh() -> Mesh {
     mesh.insert_attribute(Mesh::ATTRIBUTE_POSITION, positions);
     mesh.insert_attribute(Mesh::ATTRIBUTE_NORMAL, normals);
     mesh.insert_attribute(Mesh::ATTRIBUTE_COLOR, colors);
-    mesh.set_indices(Some(indices));
+    mesh.insert_indices(indices);
     return mesh;
 }
 

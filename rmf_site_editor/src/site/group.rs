@@ -116,7 +116,7 @@ pub trait SetMembershipExt {
 impl<'a> SetMembershipExt for EntityCommands<'a> {
     fn set_membership(&mut self, group: Option<Entity>) -> &mut Self {
         let member = self.id();
-        self.commands().add(ChangeMembership { member, group });
+        self.commands().queue(ChangeMembership { member, group });
         self
     }
 }

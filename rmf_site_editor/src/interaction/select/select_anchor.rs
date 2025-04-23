@@ -295,7 +295,7 @@ impl<'w, 's> AnchorSelection<'w, 's> {
     }
 
     fn send(&mut self, run: RunSelector) {
-        self.commands.add(move |world: &mut World| {
+        self.commands.queue(move |world: &mut World| {
             world.send_event(run);
         });
     }

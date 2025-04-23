@@ -355,12 +355,12 @@ pub fn update_visibility_for_locations(
 
     if graph_change {
         for (_, associated_graphs, _, mut m) in &mut locations {
-            *m = graphs.display_style(associated_graphs).0;
+            *m = MeshMaterial3d(graphs.display_style(associated_graphs).0);
         }
     } else {
         for e in &locations_with_changed_association {
             if let Ok((_, associated_graphs, _, mut m)) = locations.get_mut(e) {
-                *m = graphs.display_style(associated_graphs).0;
+                *m = MeshMaterial3d(graphs.display_style(associated_graphs).0);
             }
         }
     }

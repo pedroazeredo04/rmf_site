@@ -192,35 +192,32 @@ impl FromWorld for SiteAssets {
                 .with_generated_outline_normals()
                 .unwrap(),
         );
-        let lift_anchor_mesh = meshes
-            .add(Mesh::from(make_diamond(0.15 / 2.0, 0.15).transform_by(
-                Affine3A::from_translation([0.0, 0.0, 0.15 / 2.0].into()),
-            )));
+        let lift_anchor_mesh = meshes.add(Mesh::from(
+            make_diamond(0.15 / 2.0, 0.15).transform_by(Affine3A::from_translation([
+                0.0,
+                0.0,
+                0.15 / 2.0,
+            ])),
+        ));
         let site_anchor_mesh = meshes.add(
             Mesh::from(primitives::Sphere::new(0.05)), // TODO(MXG): Make the vertex radius configurable
         );
-        let lane_mid_mesh = meshes.add(make_flat_square_mesh(1.0).into());
-        let lane_mid_outline = meshes.add(make_flat_rect_mesh(1.0, 1.125).into());
-        let lane_end_mesh = meshes.add(
-            make_flat_disk(
-                OffsetCircle {
-                    radius: LANE_WIDTH / 2.0,
-                    height: 0.0,
-                },
-                32,
-            )
-            .into(),
-        );
-        let lane_end_outline = meshes.add(
-            make_flat_disk(
-                OffsetCircle {
-                    radius: 1.125 * LANE_WIDTH / 2.0,
-                    height: 0.0,
-                },
-                32,
-            )
-            .into(),
-        );
+        let lane_mid_mesh = meshes.add(make_flat_square_mesh(1.0));
+        let lane_mid_outline = meshes.add(make_flat_rect_mesh(1.0, 1.125));
+        let lane_end_mesh = meshes.add(make_flat_disk(
+            OffsetCircle {
+                radius: LANE_WIDTH / 2.0,
+                height: 0.0,
+            },
+            32,
+        ));
+        let lane_end_outline = meshes.add(make_flat_disk(
+            OffsetCircle {
+                radius: 1.125 * LANE_WIDTH / 2.0,
+                height: 0.0,
+            },
+            32,
+        ));
         let box_mesh = meshes.add(
             Mesh::from(primitives::Cuboid::new(1., 1., 1.))
                 .with_generated_outline_normals()
@@ -244,8 +241,7 @@ impl FromWorld for SiteAssets {
             .with_generated_outline_normals()
             .unwrap(),
         );
-        let location_tag_mesh =
-            meshes.add(make_location_icon(1.1 * LANE_WIDTH / 2.0, 0.01, 6).into());
+        let location_tag_mesh = meshes.add(make_location_icon(1.1 * LANE_WIDTH / 2.0, 0.01, 6));
         let physical_camera_mesh = meshes.add(
             make_physical_camera_mesh()
                 .with_generated_outline_normals()
@@ -299,7 +295,7 @@ impl SiteAssets {
         deps: &Query<&Dependents>,
     ) -> &MeshMaterial3d<StandardMaterial> {
         if deps.get(anchor).ok().filter(|d| !d.is_empty()).is_some() {
-            &self.passive_anchor_material
+            &MeshMaterial3d(self.passive_anchor_material)
         } else {
             &self.unassigned_anchor_material
         }

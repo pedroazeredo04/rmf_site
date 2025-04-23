@@ -74,6 +74,7 @@ impl Command for ChangeMembership {
     fn apply(self, world: &mut World) {
         let last = world
             .get_entity(self.member)
+            .ok()
             .map(|e| e.get::<LastAffiliation>())
             .flatten()
             .cloned();
@@ -84,7 +85,7 @@ impl Command for ChangeMembership {
             }
 
             if let Some(last) = last.0 {
-                if let Some(mut e) = world.get_entity_mut(last) {
+                if let Ok(mut e) = world.get_entity_mut(last) {
                     if let Some(mut members) = e.get_mut::<Members>() {
                         members.0.retain(|m| *m != self.member);
                     }
@@ -93,7 +94,7 @@ impl Command for ChangeMembership {
         }
 
         if let Some(new_group) = self.group {
-            if let Some(mut e) = world.get_entity_mut(new_group) {
+            if let Ok(mut e) = world.get_entity_mut(new_group) {
                 if let Some(mut members) = e.get_mut::<Members>() {
                     members.0.push(self.member);
                 } else {
@@ -102,7 +103,7 @@ impl Command for ChangeMembership {
             }
         }
 
-        if let Some(mut e) = world.get_entity_mut(self.member) {
+        if let Ok(mut e) = world.get_entity_mut(self.member) {
             e.insert(LastAffiliation(self.group));
         }
     }

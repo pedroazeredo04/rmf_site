@@ -116,7 +116,7 @@ pub fn update_keyboard_command(
         }
 
         // Smooth and normalize keyboard
-        let delta_seconds = time.delta_seconds();
+        let delta_seconds = time.delta_secs();
         let prev_keyboard_motion = keyboard_command.keyboard_motion;
         let keyboard_motion_delta =
             (target_keyboard_motion - prev_keyboard_motion).normalize_or_zero();

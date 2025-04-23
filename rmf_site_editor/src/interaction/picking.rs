@@ -82,7 +82,7 @@ pub fn update_picking_cam(
         let ray_cast_settings = RayCastSettings::default()
             .never_early_exit()
             .with_visibility(RayCastVisibility::Visible);
-        ray_cast.cast_ray(ray, &ray_cast_settings);
+        ray_cast.cast_ray(*ray, &ray_cast_settings);
     }
 }
 
@@ -129,34 +129,28 @@ pub fn update_picked(
         }
     }
 
-    let current_picked = 'current_picked: {
-        for intersections in &ray_cast.output {
-            // First only look at the visual cues that are being xrayed
-            if let Some(topmost) = pick_topmost(
-                intersections
-                    .iter()
-                    .filter(|(e, _)| {
-                        visual_cues
-                            .get(*e)
-                            .ok()
-                            .filter(|cue| cue.xray.any())
-                            .is_some()
-                    })
-                    .map(|(e, _)| *e),
-                &selectable,
-            ) {
-                break 'current_picked Some(topmost);
-            }
-
+    let current_picked = pick_topmost(
+        // First only look at the visual cues that are being xrayed
+        ray_cast
+            .output
+            .iter()
+            .filter(|(e, _)| {
+                visual_cues
+                    .get(*e)
+                    .ok()
+                    .filter(|cue| cue.xray.any())
+                    .is_some()
+            })
+            .map(|(e, _)| *e),
+        &selectable,
+    )
+    .or_else(|| {
+        pick_topmost(
             // Now look at all possible pickables
-            if let Some(topmost) = pick_topmost(intersections.iter().map(|(e, _)| *e), &selectable)
-            {
-                break 'current_picked Some(topmost);
-            }
-        }
-
-        None
-    };
+            ray_cast.output.iter().map(|(e, _)| *e),
+            &selectable,
+        )
+    });
 
     let refresh = picked.refresh;
     if refresh {

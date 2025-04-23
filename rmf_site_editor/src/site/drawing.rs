@@ -157,14 +157,14 @@ pub fn handle_loaded_drawing(
                 let mesh = make_flat_rect_mesh(width, height).transform_by(
                     Affine3A::from_translation(Vec3::new(width / 2.0, -height / 2.0, 0.0)),
                 );
-                let mesh = mesh_assets.add(mesh.into());
+                let mesh = mesh_assets.add(mesh);
                 let default = parent
                     .map(|p| default_drawing_vis.get(p.get()).ok())
                     .flatten();
                 let (alpha, alpha_mode) = drawing_alpha(vis, rank, default);
                 let material = materials.add(StandardMaterial {
                     base_color_texture: Some(handle.0.clone()),
-                    base_color: *Color::default().set_alpha(alpha),
+                    base_color: Color::default().with_alpha(alpha),
                     alpha_mode,
                     perceptual_roughness: 0.089,
                     metallic: 0.01,
@@ -207,7 +207,7 @@ pub fn handle_loaded_drawing(
                     .entity(entity)
                     // Put a handle for the material into the main entity
                     // so that we can modify it during interactions.
-                    .insert(material)
+                    .insert(MeshMaterial3d(material))
                     .remove::<LoadingDrawing>();
             }
             LoadState::Failed(error) => {
@@ -339,7 +339,7 @@ fn iter_update_drawing_visibility<'a>(
                     .map(|p| default_drawing_vis.get(p.get()).ok())
                     .flatten();
                 let (alpha, alpha_mode) = drawing_alpha(vis, rank, default);
-                mat.base_color = *mat.base_color.set_alpha(alpha);
+                mat.base_color = mat.base_color.with_alpha(alpha);
                 mat.alpha_mode = alpha_mode;
             }
         }

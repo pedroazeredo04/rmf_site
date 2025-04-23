@@ -396,9 +396,9 @@ fn update_door_visuals(
         commands.entity(*e).despawn_recursive();
     }
     let mut cue_inner = mesh_handles.get_mut(segments.cue_inner).unwrap();
-    *cue_inner = mesh_assets.add(cue_inner_mesh);
+    *cue_inner = Mesh3d(mesh_assets.add(cue_inner_mesh));
     let mut cue_outline = mesh_handles.get_mut(segments.cue_outline).unwrap();
-    *cue_outline = mesh_assets.add(cue_outline_mesh);
+    *cue_outline = Mesh3d(mesh_assets.add(cue_outline_mesh));
     let new_segments = DoorBodyType::from_door_type(kind, &entities);
     if new_segments != segments.body {
         Some(new_segments)

@@ -550,6 +550,7 @@ fn ray_from_screenspace(
     camera
         .viewport_to_world(camera_transform, viewport_pos)
         .map(Ray3d::from)
+        .ok()
 }
 
 #[test]

@@ -82,8 +82,9 @@ pub fn get_camera_selected_point(
         .or_else(|| camera.logical_viewport_rect())?
         .center();
 
-    let camera_ray =
-        camera.viewport_to_world(camera_global_transform, available_viewport_center)?;
+    let camera_ray = camera
+        .viewport_to_world(camera_global_transform, available_viewport_center)
+        .ok()?;
     let camera_ray = Ray3d::new(camera_ray.origin, camera_ray.direction);
     let raycast_setting = RayCastSettings::default()
         .always_early_exit()
@@ -93,7 +94,7 @@ pub fn get_camera_selected_point(
     let intersections = mesh_raycast.cast_ray(camera_ray, &raycast_setting);
     if intersections.len() > 0 {
         let (_, intersection_data) = &intersections[0];
-        return Some(intersection_data.position());
+        return Some(intersection_data.point);
     } else {
         return Some(get_groundplane_else_default_selection(
             camera_ray.origin,

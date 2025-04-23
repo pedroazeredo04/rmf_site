@@ -539,7 +539,7 @@ pub fn extract_selector_input<T: 'static + Send + Sync>(
         return Ok(None);
     };
 
-    let Some(mut e_mut) = world.get_entity_mut(e) else {
+    let Ok(mut e_mut) = world.get_entity_mut(e) else {
         error!(
             "Could not begin selector service because the input entity {e:?} \
             does not exist.",

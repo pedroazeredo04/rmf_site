@@ -24,7 +24,9 @@ use bevy::{
 use bevy_polyline::{
     material::PolylineMaterial,
     polyline::{Polyline, PolylineBundle},
+    prelude::{PolylineHandle, PolylineMaterialHandle},
 };
+use serde::de;
 
 #[derive(Clone, Debug, Resource)]
 pub struct InteractionAssets {
@@ -208,8 +210,8 @@ impl InteractionAssets {
             for (polyline, material) in &self.centimeter_finite_grid {
                 parent.spawn((
                     PolylineBundle {
-                        polyline: polyline.clone(),
-                        material: material.clone(),
+                        polyline: PolylineHandle(polyline.clone()),
+                        material: PolylineMaterialHandle(material.clone()),
                         ..default()
                     },
                     DisableXray,
@@ -237,31 +239,38 @@ impl FromWorld for InteractionAssets {
         let camera_control_mesh = meshes.add(Mesh::from(primitives::Sphere::new(0.02)));
         let arrow_mesh = meshes.add(make_cylinder_arrow_mesh());
         let point_light_socket_mesh = meshes.add(
-            make_cylinder(0.06, 0.02)
-                .transform_by(Affine3A::from_translation(0.04 * Vec3::Z))
-                .into(),
+            make_cylinder(0.06, 0.02).transform_by(Affine3A::from_translation(0.04 * Vec3::Z)),
         );
         let point_light_shine_mesh = meshes.add(Mesh::from(primitives::Sphere::new(0.05)));
-        let spot_light_cover_mesh = meshes.add(
-            make_smooth_wrap(
-                [
+        let spot_light_cover_mesh = meshes.add(make_smooth_wrap(
+            [
+                OffsetCircle {
+                    radius: 0.05,
+                    height: 0.0,
+                },
+                OffsetCircle {
+                    radius: 0.01,
+                    height: 0.04,
+                },
+            ],
+            32,
+        ));
+        let spot_light_shine_mesh = meshes.add(
+            Mesh::from(
+                make_bottom_circle(
                     OffsetCircle {
                         radius: 0.05,
                         height: 0.0,
                     },
+                    32,
+                )
+                .merge_with(make_top_circle(
                     OffsetCircle {
                         radius: 0.01,
                         height: 0.04,
                     },
-                ],
-                32,
-            )
-            .into(),
-        );
-        let spot_light_shine_mesh = meshes.add(
-            Mesh::from(
-                make_bottom_circle(Cylinder::new(0.05, 0.0), 32)
-                    .merge_with(make_top_circle(Cylinder::new(0.01, 0.04), 32)),
+                    32,
+                )),
             )
             .with_generated_outline_normals()
             .unwrap(),

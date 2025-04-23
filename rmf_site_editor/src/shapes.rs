@@ -26,7 +26,9 @@ use bevy::{
     },
 };
 use bevy_mod_outline::ATTRIBUTE_OUTLINE_NORMAL;
-use bevy_mod_outline::{GenerateOutlineNormalsError, OutlineMeshExt};
+use bevy_mod_outline::{
+    GenerateOutlineNormalsError, GenerateOutlineNormalsSettings, OutlineMeshExt,
+};
 use bevy_polyline::{material::PolylineMaterial, polyline::Polyline};
 use rmf_site_format::Angle;
 use std::collections::{BTreeMap, HashMap};
@@ -37,7 +39,7 @@ pub(crate) trait WithOutlineMeshExt: Sized {
 
 impl WithOutlineMeshExt for Mesh {
     fn with_generated_outline_normals(mut self) -> Result<Self, GenerateOutlineNormalsError> {
-        self.generate_outline_normals()?;
+        self.generate_outline_normals(&GenerateOutlineNormalsSettings::default())?;
         Ok(self)
     }
 }
@@ -1294,7 +1296,7 @@ pub(crate) fn make_finite_grid(
                 };
                 let material = PolylineMaterial {
                     width,
-                    color,
+                    color: color.into(),
                     depth_bias,
                     perspective,
                 };
@@ -1326,7 +1328,7 @@ pub(crate) fn make_finite_grid(
         let width = *weights.get(&n).unwrap();
         let material = PolylineMaterial {
             width,
-            color,
+            color: color.into(),
             depth_bias,
             perspective,
         };

@@ -29,7 +29,7 @@ use bevy::{
     scene::SceneInstance,
 };
 use bevy_impulse::*;
-use bevy_mod_outline::OutlineMeshExt;
+use bevy_mod_outline::{GenerateOutlineNormalsSettings, OutlineMeshExt};
 use rmf_site_format::{
     Affiliation, AssetSource, Group, IssueKey, ModelInstance, ModelMarker, ModelProperty,
     NameInSite, Pending, Scale,
@@ -681,7 +681,7 @@ pub fn make_models_selectable(
     // If layer should not be visible, don't make it selectable
     if scene_roots
         .get(req.parent)
-        .is_ok_and(|r| r.iter().all(|l| l == MODEL_PREVIEW_LAYER))
+        .is_ok_and(|r| r.iter().all(|l| l == MODEL_PREVIEW_LAYER.into()))
     {
         return req;
     }
@@ -693,8 +693,11 @@ pub fn make_models_selectable(
             .insert(DragPlaneBundle::new(req.parent, Vec3::Z));
 
         if let Ok(mesh_handle) = mesh_handles.get(e) {
-            if let Some(mesh) = mesh_assets.get_mut(mesh_handle.0) {
-                if mesh.generate_outline_normals().is_err() {
+            if let Some(mesh) = mesh_assets.get_mut(&mut mesh_handle.0) {
+                if mesh
+                    .generate_outline_normals(&GenerateOutlineNormalsSettings::default())
+                    .is_err()
+                {
                     warn!(
                         "WARNING: Unable to generate outline normals for \
                         a model mesh"

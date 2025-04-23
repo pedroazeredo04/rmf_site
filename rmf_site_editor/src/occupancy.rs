@@ -207,7 +207,7 @@ fn calculate_grid(
 
             range = range.union_with(body_range);
 
-            if let Some(mesh) = meshes.get(mesh.0) {
+            if let Some(mesh) = meshes.get(&mesh.0) {
                 if mesh.primitive_topology() != PrimitiveTopology::TriangleList {
                     continue;
                 }
@@ -289,7 +289,7 @@ fn calculate_grid(
             commands.entity(level).with_children(|level| {
                 level
                     .spawn((
-                        Mesh3d(meshes.add(mesh.into())),
+                        Mesh3d(meshes.add(mesh)),
                         MeshMaterial3d(assets.occupied_material.clone()),
                         Transform::default(),
                         Visibility::default(),

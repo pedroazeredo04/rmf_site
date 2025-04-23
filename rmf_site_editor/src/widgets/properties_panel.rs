@@ -153,7 +153,7 @@ impl Plugin for PropertiesPanelPlugin {
     fn build(&self, app: &mut App) {
         let widget = PanelWidget::new(show_panel_of_tiles, app.world_mut());
         let id = app.world_mut().spawn((widget, self.side)).id();
-        app.world().insert_resource(PropertiesPanel {
+        app.world_mut().insert_resource(PropertiesPanel {
             side: self.side,
             id,
         });

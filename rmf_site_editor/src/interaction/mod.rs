@@ -277,6 +277,6 @@ fn set_material(
     q_materials: &mut Query<&mut MeshMaterial3d<StandardMaterial>>,
 ) {
     if let Some(mut m) = q_materials.get_mut(entity).ok() {
-        *m = to_material.clone();
+        *m = MeshMaterial3d(to_material.clone());
     }
 }

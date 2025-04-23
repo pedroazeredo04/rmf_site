@@ -16,6 +16,7 @@
 */
 use crate::interaction::{InteractionAssets, PickingBlockers};
 use bevy::{
+    color::palettes::css,
     core_pipeline::tonemapping::Tonemapping,
     prelude::*,
     render::{
@@ -248,7 +249,7 @@ impl FromWorld for CameraControls {
                 Mesh3d(selection_mesh),
                 Visibility::Visible,
                 Transform::default(),
-                MeshMaterial3d::default(),
+                MeshMaterial3d::<StandardMaterial>::default(),
             ))
             .id();
 
@@ -278,7 +279,7 @@ impl FromWorld for CameraControls {
                     Tonemapping::ReinhardLuminance,
                 ))
                 .insert(Visibility::Inherited)
-                .insert(RenderLayers::layer(layer))
+                .insert(RenderLayers::layer(layer.into()))
                 .id()
         });
 
@@ -291,8 +292,8 @@ impl FromWorld for CameraControls {
             ))
             .insert(Visibility::Inherited)
             .insert(RenderLayers::from_layers(&[
-                GENERAL_RENDER_LAYER,
-                VISUAL_CUE_RENDER_LAYER,
+                GENERAL_RENDER_LAYER.into(),
+                VISUAL_CUE_RENDER_LAYER.into(),
             ]))
             .add_children(&[perspective_headlight])
             .add_children(&perspective_child_cameras)
@@ -314,9 +315,11 @@ impl FromWorld for CameraControls {
 
         let ortho_projection = OrthographicProjection {
             viewport_origin: Vec2::new(0.5, 0.5),
-            scaling_mode: ScalingMode::FixedVertical(1.0),
+            scaling_mode: ScalingMode::FixedVertical {
+                viewport_height: 1.0,
+            },
             scale: 10.0,
-            ..default()
+            ..OrthographicProjection::default_3d()
         };
 
         let orthographic_child_cameras = [
@@ -338,7 +341,7 @@ impl FromWorld for CameraControls {
                     Tonemapping::ReinhardLuminance,
                 ))
                 .insert(Visibility::Inherited)
-                .insert(RenderLayers::layer(layer))
+                .insert(RenderLayers::layer(layer.into()))
                 .id()
         });
 
@@ -355,8 +358,8 @@ impl FromWorld for CameraControls {
             ))
             .insert(Visibility::Inherited)
             .insert(RenderLayers::from_layers(&[
-                GENERAL_RENDER_LAYER,
-                VISUAL_CUE_RENDER_LAYER,
+                GENERAL_RENDER_LAYER.into(),
+                VISUAL_CUE_RENDER_LAYER.into(),
             ]))
             .add_children(&[orthographic_headlight])
             .add_children(&orthographic_child_cameras)
@@ -500,17 +503,27 @@ fn update_orbit_center_marker(
         {
             if let Some(orbit_center) = controls.orbit_center {
                 *marker_visibility = Visibility::Visible;
-                *marker_material = interaction_assets.camera_control_orbit_material.clone();
+                *marker_material =
+                    MeshMaterial3d(interaction_assets.camera_control_orbit_material.clone());
                 marker_transform.translation = orbit_center;
-                gizmo.sphere(orbit_center, Quat::IDENTITY, 0.1, Color::GREEN);
-            }
+                gizmo.sphere(
+                    Isometry3d::new(orbit_center, Quat::IDENTITY),
+                    0.1,
+                    css::LIME,
+                );
+            };
         // Panning
         } else if cursor_command.command_type == CameraCommandType::Pan {
             if let Some(cursor_selection) = cursor_command.cursor_selection {
                 *marker_visibility = Visibility::Visible;
-                *marker_material = interaction_assets.camera_control_pan_material.clone();
+                *marker_material =
+                    MeshMaterial3d(interaction_assets.camera_control_pan_material.clone());
                 marker_transform.translation = cursor_selection;
-                gizmo.sphere(cursor_selection, Quat::IDENTITY, 0.1, Color::WHITE);
+                gizmo.sphere(
+                    Isometry3d::new(cursor_selection, Quat::IDENTITY),
+                    0.1,
+                    css::WHITE,
+                );
             }
         } else {
             *marker_visibility = Visibility::Hidden;

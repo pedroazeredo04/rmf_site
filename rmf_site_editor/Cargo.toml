@@ -17,7 +17,7 @@ path = "examples/extending_menu.rs"
 
 [dependencies]
 bevy_mod_outline = "0.9"
-bevy_gltf_export = { git = "https://github.com/luca-della-vedova/bevy_gltf_export", branch = "bevy_0.14"}
+bevy_gltf_export = { git = "https://github.com/xiyuoh/bevy_gltf_export", branch = "xiyu/bevy_0.15"}
 bevy_polyline = "0.11"
 bevy_stl = "0.15"
 bevy_obj = { version = "0.15", features = ["scene"] }
@@ -35,7 +35,7 @@ rmf_site_format = { path = "../rmf_site_format", features = ["bevy"] }
 itertools = "*"
 bitfield = "*"
 crossbeam-channel = "0.5"
-tracing = "0.1.37"
+tracing = "0.1.41"
 tracing-subscriber = "0.3.1"
 rfd = "0.12"
 urdf-rs = "0.7"
@@ -52,8 +52,8 @@ uuid = { version = "1.7", features = ["v4"] }
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 clap = { version = "4.0.10", features = ["color", "derive", "help", "usage", "suggestions"] }
 bevy_egui = "0.33"
-bevy_impulse = { git = "https://github.com/open-rmf/bevy_impulse", branch = "main" }
+bevy_impulse = { git = "https://github.com/open-rmf/bevy_impulse", branch = "xiyu/release-0.3" }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 bevy_egui = { version = "0.33", default-features = false, features = ["open_url", "default_fonts", "render"] }
-bevy_impulse = { git = "https://github.com/open-rmf/bevy_impulse", branch = "main", features = ["single_threaded_async"]}
+bevy_impulse = { git = "https://github.com/open-rmf/bevy_impulse", branch = "xiyu/release-0.3", features = ["single_threaded_async"]}

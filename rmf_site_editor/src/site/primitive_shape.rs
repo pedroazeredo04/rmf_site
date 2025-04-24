@@ -87,7 +87,10 @@ pub fn handle_new_primitive_shapes(
             .last()
         {
             entity_commands.insert(render_layer.clone());
-            if !render_layer.iter().all(|l| l == MODEL_PREVIEW_LAYER.into()) {
+            if !render_layer
+                .iter()
+                .all(|l| l == MODEL_PREVIEW_LAYER as usize)
+            {
                 spawn_selectable(entity_commands);
             }
         } else {

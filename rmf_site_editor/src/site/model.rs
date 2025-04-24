@@ -149,7 +149,7 @@ pub fn spawn_scene_for_loaded_model(
         // Note we can't do an `if let Some()` because get(Handle) panics if the type is
         // not the stored type
         let gltfs = world.resource::<Assets<Gltf>>();
-        let gltf = gltfs.get(&h)?;
+        let gltf = gltfs.get(h.typed::<Gltf>().id())?;
         // Get default scene if present, otherwise index 0
         let scene = gltf
             .default_scene
@@ -667,7 +667,7 @@ pub fn make_models_selectable(
     pending_or_previews: Query<(), Or<(With<Pending>, With<Preview>)>>,
     scene_roots: Query<&RenderLayers, With<ModelMarker>>,
     all_children: Query<&Children>,
-    mesh_handles: Query<&Mesh3d>,
+    mut mesh_handles: Query<&mut Mesh3d>,
     mut mesh_assets: ResMut<Assets<Mesh>>,
 ) -> ModelLoadingRequest {
     // Pending items (i.e. mouse previews) should not be selectable
@@ -681,7 +681,7 @@ pub fn make_models_selectable(
     // If layer should not be visible, don't make it selectable
     if scene_roots
         .get(req.parent)
-        .is_ok_and(|r| r.iter().all(|l| l == MODEL_PREVIEW_LAYER.into()))
+        .is_ok_and(|r| r.iter().all(|l| l == MODEL_PREVIEW_LAYER as usize))
     {
         return req;
     }
@@ -692,7 +692,7 @@ pub fn make_models_selectable(
             .entity(e)
             .insert(DragPlaneBundle::new(req.parent, Vec3::Z));
 
-        if let Ok(mesh_handle) = mesh_handles.get(e) {
+        if let Ok(mut mesh_handle) = mesh_handles.get_mut(e) {
             if let Some(mesh) = mesh_assets.get_mut(&mut mesh_handle.0) {
                 if mesh
                     .generate_outline_normals(&GenerateOutlineNormalsSettings::default())

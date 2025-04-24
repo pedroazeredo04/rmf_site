@@ -192,13 +192,13 @@ impl FromWorld for SiteAssets {
                 .with_generated_outline_normals()
                 .unwrap(),
         );
-        let lift_anchor_mesh = meshes.add(Mesh::from(
-            make_diamond(0.15 / 2.0, 0.15).transform_by(Affine3A::from_translation([
-                0.0,
-                0.0,
-                0.15 / 2.0,
-            ])),
-        ));
+        let lift_anchor_mesh = meshes.add(Mesh::from(make_diamond(0.15 / 2.0, 0.15).transform_by(
+            Affine3A::from_translation(Vec3 {
+                x: 0.0,
+                y: 0.0,
+                z: 0.15 / 2.0,
+            }),
+        )));
         let site_anchor_mesh = meshes.add(
             Mesh::from(primitives::Sphere::new(0.05)), // TODO(MXG): Make the vertex radius configurable
         );
@@ -293,9 +293,9 @@ impl SiteAssets {
         &self,
         anchor: Entity,
         deps: &Query<&Dependents>,
-    ) -> &MeshMaterial3d<StandardMaterial> {
+    ) -> &Handle<StandardMaterial> {
         if deps.get(anchor).ok().filter(|d| !d.is_empty()).is_some() {
-            &MeshMaterial3d(self.passive_anchor_material)
+            &self.passive_anchor_material
         } else {
             &self.unassigned_anchor_material
         }

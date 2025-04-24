@@ -920,7 +920,10 @@ pub fn inspector_cursor_transform(
         }
     };
 
-    let ray = Ray3d::new(intersection.point.clone(), intersection.normal.clone());
+    let Ok(ray_direction) = Dir3::try_from(intersection.normal.clone()) else {
+        return;
+    };
+    let ray = Ray3d::new(intersection.point.clone(), ray_direction);
     *transform = Transform::from_matrix(Mat4::from_rotation_translation(
         Quat::from_rotation_arc(Vec3::new(0., 0., 1.), ray.direction.clone().as_vec3()),
         ray.origin.clone(),

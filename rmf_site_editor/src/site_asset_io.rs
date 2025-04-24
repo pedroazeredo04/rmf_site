@@ -5,6 +5,7 @@ use bevy::{
         VecReader,
     },
     prelude::*,
+    utils::BoxedFuture,
 };
 use dirs;
 use serde::Deserialize;
@@ -36,9 +37,9 @@ struct FuelErrorMsg {
     msg: String,
 }
 
-fn load_from_file<'a>(path: PathBuf) -> Result<impl Reader + 'a, AssetReaderError> {
+fn load_from_file(path: PathBuf) -> Result<Box<dyn Reader>, AssetReaderError> {
     match fs::read(&path) {
-        Ok(bytes) => Ok(VecReader::new(bytes)),
+        Ok(bytes) => Ok(Box::new(VecReader::new(bytes))),
         Err(e) => {
             if e.kind() == std::io::ErrorKind::NotFound {
                 Err(AssetReaderError::NotFound(path))
@@ -99,10 +100,10 @@ fn generate_remote_asset_url(name: &str) -> Result<String, AssetReaderError> {
     return Ok(uri);
 }
 
-async fn fetch_asset<'a>(
+async fn fetch_asset(
     remote_url: String,
     asset_name: String,
-) -> Result<impl Reader + 'a, AssetReaderError> {
+) -> Result<Box<dyn Reader>, AssetReaderError> {
     let mut req = ehttp::Request::get(remote_url.clone());
     match FUEL_API_KEY.lock() {
         Ok(key) => {
@@ -156,7 +157,7 @@ async fn fetch_asset<'a>(
     {
         save_to_cache(&asset_name, &bytes);
     }
-    Ok(VecReader::new(bytes))
+    Ok(Box::new(VecReader::new(bytes)))
 }
 
 fn get_path_from_env() -> Result<PathBuf, env::VarError> {
@@ -182,7 +183,7 @@ fn save_to_cache(name: &str, bytes: &[u8]) {
 
 pub struct SiteAssetReader<F>
 where
-    F: Fn(&Path) -> Result<dyn Reader + '_, AssetReaderError> + Sync + 'static,
+    F: Fn(&Path) -> BoxedFuture<Result<Box<dyn Reader>, AssetReaderError>> + Sync + 'static,
 {
     pub default_reader: Box<dyn ErasedAssetReader>,
     pub reader: F,
@@ -190,7 +191,7 @@ where
 
 impl<F> SiteAssetReader<F>
 where
-    F: Fn(&Path) -> Result<dyn Reader + '_, AssetReaderError> + Sync + 'static,
+    F: Fn(&Path) -> BoxedFuture<Result<Box<dyn Reader>, AssetReaderError>> + Sync + 'static,
 {
     pub fn new(reader: F) -> Self {
         Self {
@@ -204,7 +205,7 @@ where
 
 impl<F> AssetReader for SiteAssetReader<F>
 where
-    F: Fn(&Path) -> Result<dyn Reader + '_, AssetReaderError> + Send + Sync + 'static,
+    F: Fn(&Path) -> BoxedFuture<Result<Box<dyn Reader>, AssetReaderError>> + Send + Sync + 'static,
 {
     async fn read<'a>(&'a self, path: &'a Path) -> Result<impl Reader + 'a, AssetReaderError> {
         (self.reader)(path).await
